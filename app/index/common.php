@@ -1,7 +1,7 @@
 <?php
 //操作成功：0.
 function success ( array &$data = NULL ) {
-    return json( ['status' => '0', 'msg' => 'ok', 'data' => $data] );
+    return json( ['status' => '200', 'msg' => 'ok', 'data' => $data] );
 }
 
 //操作失败：空数据

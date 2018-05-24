@@ -1,6 +1,8 @@
 <?php
 namespace app\index\controller;
 
+use app\index\model\User as userModel;//用户模型
+
 class Index
 {
     public function index()
@@ -12,16 +14,45 @@ class Index
      * 用户登录
      */
 
-    public function login(){
+    public function dologin(){
+        $wx_user = new userModel();
 
+        $code = input('post.code/s');
+
+        if(!$code){
+            return failMsg('code不能为空');
+        }
+        $res_wx = $this->send_url(['code'=>$code]);
+        $res_wx = json_decode($res_wx,true);
+        if($res_wx['errcode']){
+            return failMsg('code失效');
+        }
+        $post_data['openid'] = $res_wx['openid']??'';
+        $post_data['unionid'] = $res_wx['unionid'] ?? '';
+
+        //检查用户是否存在
+        $user_info = $wx_user->field('id')->where("openid='%s' ",array($post_data['openid']))->find();
+        $type = $user_info['id'] ? 2 : 1 ;
+        $post_data = $wx_user->save($post_data,$type);
+        if(!$post_data){
+            return failMsg($wx_user->getError());
+        }
+
+        if($user_info['id']){
+            $last_id = $user_info['id'];
+            $wx_user->where(array('id'=>$last_id))->save($post_data);
+        }else{
+            $last_id = $wx_user->save($post_data);
+        }
+        $session_user_info = md5($post_data['openid'].$last_id);
+        $token = md5($post_data['openid'].$last_id.time().microtime());
+        //设置登录信息
+        $post_data['user_id'] = $last_id;
+        S($token,$session_user_info,['expire'=>86400*30]);
+        S($session_user_info,$post_data,['expire'=>86400*30]);
+        return success($token);
 
     }
 
-    /**
-     * 获取用户信息
-     */
-    public function getUserInfo(){
 
-
-    }
 }
