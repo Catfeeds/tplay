@@ -2,14 +2,14 @@
 /**
  * Created by PhpStorm.
  * User: Administrator
- * Date: 2018/5/24 0024
- * Time: 下午 7:43
+ * Date: 2018/5/25 0025
+ * Time: 下午 3:04
  */
 
 namespace app\index\model;
 use \think\Model;
 
-class User extends Model
+class Doctor extends Model
 {
 
 }

@@ -15,9 +15,9 @@ class Index
      */
 
     public function dologin(){
-        $wx_user = new userModel();
+        /*$wx_user = new userModel();
 
-        $code = input('post.code/s');
+        $code = input('post.code');
 
         if(!$code){
             return failMsg('code不能为空');
@@ -27,8 +27,8 @@ class Index
         if($res_wx['errcode']){
             return failMsg('code失效');
         }
-        $post_data['openid'] = $res_wx['openid']??'';
-        $post_data['unionid'] = $res_wx['unionid'] ?? '';
+        $post_data['openid'] = $res_wx['openid'];
+        $post_data['unionid'] = $res_wx['unionid'];
 
         //检查用户是否存在
         $user_info = $wx_user->field('id')->where("openid='%s' ",array($post_data['openid']))->find();
@@ -48,9 +48,9 @@ class Index
         $token = md5($post_data['openid'].$last_id.time().microtime());
         //设置登录信息
         $post_data['user_id'] = $last_id;
-        S($token,$session_user_info,['expire'=>86400*30]);
-        S($session_user_info,$post_data,['expire'=>86400*30]);
-        return success($token);
+        Session::set($token,$session_user_info,['expire'=>86400*30]);
+        Session::set($session_user_info,$post_data,['expire'=>86400*30]);
+        return success($token);*/
 
     }
 

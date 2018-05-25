@@ -44,8 +44,20 @@ class Doctorcenter extends Controller
      */
     public function index()
     {
+        //检查参数
+        $post = $this->request->post();
+
+        //检查参数
+        if (TRUE !== $result = $post['token']) return failIncomplete($result);
+        //校验签名
+        if (!verifySign($_POST)) return failSign();
+        //检查是否已登录
+        if (FALSE === $userID = checkLogin()) return failLogin();
+
+
         $model = new visitModel();
-        $get = $this->request->get();
+
+
         $res = $model->select();
         return success($res);
         //var_dump(Db::name('visit')->select());
