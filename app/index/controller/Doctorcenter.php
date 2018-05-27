@@ -12,7 +12,8 @@ namespace app\index\controller;
 use \think\Db;
 use \think\Controller;
 use \think\Response\json;
-use app\index\model\Visit as visitModel;//问诊模型
+use app\index\model\Visit as visitModel;
+use think\Session;//问诊模型
 
 class Doctorcenter extends Controller
 {
@@ -44,23 +45,27 @@ class Doctorcenter extends Controller
      */
     public function index()
     {
-        //检查参数
-        $post = $this->request->post();
-
-        //检查参数
-        if (TRUE !== $result = $post['token']) return failIncomplete($result);
-        //校验签名
-        if (!verifySign($_POST)) return failSign();
-        //检查是否已登录
-        if (FALSE === $userID = checkLogin()) return failLogin();
-
-
-        $model = new visitModel();
-
-
-        $res = $model->select();
-        return success($res);
         //var_dump(Db::name('visit')->select());
+        //检查参数
+
+        //检查是否已登录
+        /*$doctor_code = Session::get('doctor_code');
+        if(!$doctor_code){
+            return failLogin("您还未登录");
+        }*/
+        $post = $this->request->param();
+        $model = new visitModel();
+        $where['STATUS']= input('status');
+        //$where['DOCTOR_CODE'] = $doctor_code;
+        $res = $model->where($where)->order('create_time desc')->select();
+
+        if($res){
+            return success($res);
+        }else{
+            return emptyResult();
+        }
+
+
 
 
     }

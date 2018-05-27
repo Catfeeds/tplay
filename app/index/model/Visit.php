@@ -10,6 +10,7 @@ use \think\Model;
 
 class Visit extends Model
 {
+
     public function visitline(){
         //关联问诊明细表
         return $this->hasMany('VisitLine');

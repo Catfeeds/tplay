@@ -2,8 +2,10 @@
 namespace app\index\controller;
 
 use app\index\model\User as userModel;//用户模型
+use \think\Session;
+use \think\Controller;
 
-class Index
+class Index extends Controller
 {
     public function index()
     {
@@ -15,42 +17,51 @@ class Index
      */
 
     public function dologin(){
-        /*$wx_user = new userModel();
+        $wx_user = new userModel();
 
-        $code = input('post.code');
+        $code = input('code');
 
-        if(!$code){
+        $post_data['NAME']  = input('name');
+        $post_data['WX_NICK_NAME'] = input('nick_name');
+        $post_data['WX_HEAD_IMG_URL'] = input('head_img');
+        $post_data['WX_SEX'] = input('sex');
+        $post_data['WX_COUNTRY'] = input('coutry');
+        $post_data['WX_CITY'] = input('city');
+        $post_data['WX_PROVINCE']= input('province');
+
+
+        /*if(!$code){
             return failMsg('code不能为空');
         }
-        $res_wx = $this->send_url(['code'=>$code]);
+        $res_wx = send_url(['code'=>$code]);
         $res_wx = json_decode($res_wx,true);
         if($res_wx['errcode']){
             return failMsg('code失效');
         }
-        $post_data['openid'] = $res_wx['openid'];
-        $post_data['unionid'] = $res_wx['unionid'];
+        $post_data['OPEN_ID_UR'] = $res_wx['openid'];
+        $post_data['UNION_ID'] = $res_wx['unionid'];*/
+        $post_data['OPEN_ID_UR'] = input('openid');
 
         //检查用户是否存在
-        $user_info = $wx_user->field('id')->where("openid='%s' ",array($post_data['openid']))->find();
-        $type = $user_info['id'] ? 2 : 1 ;
-        $post_data = $wx_user->save($post_data,$type);
-        if(!$post_data){
-            return failMsg($wx_user->getError());
-        }
+        $where['OPEN_ID_UR'] = $post_data['OPEN_ID_UR'];
+        $user_info = $wx_user->field('ID')->where($where)->find();
 
-        if($user_info['id']){
-            $last_id = $user_info['id'];
-            $wx_user->where(array('id'=>$last_id))->save($post_data);
+        if($user_info['ID']){
+            $last_id = $user_info['ID'];
+            $wx_user->save($post_data,['ID'=>$user_info['ID']]);
         }else{
-            $last_id = $wx_user->save($post_data);
+            $wx_user->save($post_data);
+            $last_id = $wx_user->getLastInsID();
         }
-        $session_user_info = md5($post_data['openid'].$last_id);
-        $token = md5($post_data['openid'].$last_id.time().microtime());
+        $session_user_info = md5($post_data['OPEN_ID_UR'].$last_id);
+        $token = md5($post_data['OPEN_ID_UR'].$last_id.time().microtime());
+
         //设置登录信息
         $post_data['user_id'] = $last_id;
-        Session::set($token,$session_user_info,['expire'=>86400*30]);
-        Session::set($session_user_info,$post_data,['expire'=>86400*30]);
-        return success($token);*/
+        Session::set($token,$session_user_info);
+        Session::set($session_user_info,$post_data);
+        $post_data['token'] = $token;
+        return success($post_data);
 
     }
 
