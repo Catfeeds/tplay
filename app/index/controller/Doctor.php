@@ -10,6 +10,7 @@
 namespace app\index\controller;
 use \think\Controller;
 use app\index\model\Doctor as doctorModel;//医生模型
+use \think\db;
 
 class Doctor extends Controller
 {
@@ -68,6 +69,13 @@ class Doctor extends Controller
      */
     public function questions()
     {
+        $where['doctor_code'] = input('doctor_code');
+        $line = Db::name('visit_line')->field('content')->where($where)->select();
+        if($line){
+            return success($doctor);
+        }else{
+            return emptyResult();
+        }
 
     }
 
