@@ -21,13 +21,13 @@ class Index extends Controller
 
         $code = input('code');
 
-        $post_data['NAME']  = input('name');
-        $post_data['WX_NICK_NAME'] = input('nick_name');
-        $post_data['WX_HEAD_IMG_URL'] = input('head_img');
-        $post_data['WX_SEX'] = input('sex');
-        $post_data['WX_COUNTRY'] = input('coutry');
-        $post_data['WX_CITY'] = input('city');
-        $post_data['WX_PROVINCE']= input('province');
+        $post_data['name']  = input('name');
+        $post_data['wx_nick_name'] = input('nick_name');
+        $post_data['wx_head_img_url'] = input('head_img');
+        $post_data['wx_sex'] = input('sex');
+        $post_data['wx_country'] = input('coutry');
+        $post_data['wx_city'] = input('city');
+        $post_data['wx_province']= input('province');
 
 
         /*if(!$code){
@@ -38,23 +38,23 @@ class Index extends Controller
         if($res_wx['errcode']){
             return failMsg('code失效');
         }
-        $post_data['OPEN_ID_UR'] = $res_wx['openid'];
-        $post_data['UNION_ID'] = $res_wx['unionid'];*/
-        $post_data['OPEN_ID_UR'] = input('openid');
+        $post_data['open_id_ur'] = $res_wx['openid'];
+        $post_data['union_id'] = $res_wx['unionid'];*/
+        $post_data['open_id_ur'] = input('openid');
 
         //检查用户是否存在
-        $where['OPEN_ID_UR'] = $post_data['OPEN_ID_UR'];
-        $user_info = $wx_user->field('ID')->where($where)->find();
+        $where['open_id_ur'] = $post_data['open_id_ur'];
+        $user_info = $wx_user->field('id')->where($where)->find();
 
         if($user_info['ID']){
-            $last_id = $user_info['ID'];
-            $wx_user->save($post_data,['ID'=>$user_info['ID']]);
+            $last_id = $user_info['id'];
+            $wx_user->save($post_data,['id'=>$user_info['id']]);
         }else{
             $wx_user->save($post_data);
             $last_id = $wx_user->getLastInsID();
         }
-        $session_user_info = md5($post_data['OPEN_ID_UR'].$last_id);
-        $token = md5($post_data['OPEN_ID_UR'].$last_id.time().microtime());
+        $session_user_info = md5($post_data['open_id_ur'].$last_id);
+        $token = md5($post_data['open_id_ur'].$last_id.time().microtime());
 
         //设置登录信息
         $post_data['user_id'] = $last_id;

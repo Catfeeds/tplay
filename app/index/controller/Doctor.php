@@ -24,7 +24,7 @@ class Doctor extends Controller
         $post = input('page');
 
 
-        $doctor =  $model->order('REGISTER_DT desc') ->select();
+        $doctor =  $model->field('name,head_img,title,hospital_code,department_code,original_price')->order('create_time desc') ->select();
 
         if($doctor){
             return success($doctor);
@@ -38,6 +38,16 @@ class Doctor extends Controller
      */
     public function detail()
     {
+        //实例化医生模型
+        $model = new doctorModel();
+        $where['id'] = input('id');
+        $doctor =  $model->where($where)->select();
+
+        if($doctor){
+            return success($doctor);
+        }else{
+            return emptyResult();
+        }
 
     }
 
@@ -46,6 +56,10 @@ class Doctor extends Controller
      */
     public function putQuestions()
     {
+
+        $post_data['content']  = input('content');
+        $post_data['url'] = input('url');
+
 
     }
 
