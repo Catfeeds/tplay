@@ -46,7 +46,7 @@ class Index extends Controller
         $where['open_id_ur'] = $post_data['open_id_ur'];
         $user_info = $wx_user->field('id')->where($where)->find();
 
-        if($user_info['ID']){
+        if($user_info['id']){
             $last_id = $user_info['id'];
             $wx_user->save($post_data,['id'=>$user_info['id']]);
         }else{

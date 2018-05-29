@@ -12,8 +12,10 @@ namespace app\index\controller;
 use \think\Db;
 use \think\Controller;
 use \think\Response\json;
-use app\index\model\Visit as visitModel;
-use think\Session;//问诊模型
+use app\index\model\Visit as visitModel;//问诊模型
+use think\Session;
+use app\index\model\PaymentLine as paymentLineModel;//付款队列
+use app\index\model\Account as accountModel;//账户模型
 
 class Doctorcenter extends Controller
 {
@@ -75,6 +77,22 @@ class Doctorcenter extends Controller
      */
     public function income()
     {
+        //获取余额
+        $doctor_code = Session::get('doctor_code');
+        //检查是否已登录
+        /*
+        if(!$doctor_code){
+            return failLogin("您还未登录");
+        }*/
+        $where['type'] = 'DT';
+        $where['code'] = $doctor_code;
+        $model = new accountModel();
+        $re = $model ->where($where)->sum('amount');
+        if($re){
+            return success($re);
+        }else{
+            return failMsg('查询失败');
+        }
 
 
     }
@@ -84,6 +102,22 @@ class Doctorcenter extends Controller
      */
     public function incomeList()
     {
+        $doctor_code = Session::get('doctor_code');
+        //检查是否已登录
+        /*
+        if(!$doctor_code){
+            return failLogin("您还未登录");
+        }*/
+        $where['type'] = 'DT';
+        $where['code'] = $doctor_code;
+        $model = new accountModel();
+        $re = $model->field('id,order_code,amount,create_time')->where($where)->select();
+        if($re){
+            return success($re);
+        }else{
+            return failMsg('查询失败');
+        }
+
 
     }
 
@@ -92,6 +126,32 @@ class Doctorcenter extends Controller
      */
     public function withdraw()
     {
+        $open_id = Session::get('open_id');
+        $doctor_code = Session::get('doctor_code');
+        //检查是否已登录
+        /*
+        if(!$doctor_code){
+            return failLogin("您还未登录");
+        }*/
+
+        //先查询数据是否存在
+        $where['open_id'] = $open_id;
+        $where['doctor_code'] = $doctor_code;
+        $model = new paymentLineModel();
+        $line = $model->where($where)->find();
+        if(!$line) return failMsg('你没有权限操作');
+
+        $data['name'] = input('name');//姓名
+        $data['card_no'] = input('card_no');
+        $data['opening_bank'] = input('opening_bank');
+        $data['amount'] = input('amount');
+
+        $res = $model->save($data);
+        if($res){
+            return success($res);
+        }else{
+            return failMsg('申请失败');
+        }
 
     }
 

@@ -11,6 +11,7 @@ namespace app\index\controller;
 use \think\Controller;
 use app\index\model\Doctor as doctorModel;//医生模型
 use \think\db;
+use think\File;
 
 class Doctor extends Controller
 {
@@ -25,7 +26,7 @@ class Doctor extends Controller
         $post = input('page');
 
 
-        $doctor =  $model->field('name,head_img,title,hospital_code,department_code,original_price')->order('create_time desc') ->select();
+        $doctor =  $model->field('id,name,head_img,title,hospital_code,department_code,original_price')->order('create_time desc') ->select();
 
         if($doctor){
             return success($doctor);
@@ -43,7 +44,6 @@ class Doctor extends Controller
         $model = new doctorModel();
         $where['id'] = input('id');
         $doctor =  $model->where($where)->select();
-
         if($doctor){
             return success($doctor);
         }else{
@@ -57,9 +57,25 @@ class Doctor extends Controller
      */
     public function putQuestions()
     {
+        $file = request()->file('file');// 获取表单提交过来的文件
+        $error = $_FILES['file']['error']; // 如果$_FILES['file']['error']>0,表示文件上传失败
+        if($error){
+            return failMsg('文件上传失败');
+        }
+        //上传的时候的原文件名
+        $filename = $file -> getInfo()['name'];
+        $dir = config('upload_path');// 自定义文件上传路径
+        if (!is_dir($dir)) {
+            mkdir($dir,0777,true);
+        }
+        $info = $file->move($dir);// 将文件上传指定目录
+        //获取文件的全路径
+        $post_data['url'] = str_replace('\\', '/', $info->getPathname());//GetPathName返回文件路径(盘符+路径+文件名)
 
         $post_data['content']  = input('content');
-        $post_data['url'] = input('url');
+
+
+
 
 
     }
@@ -72,11 +88,12 @@ class Doctor extends Controller
         $where['doctor_code'] = input('doctor_code');
         $line = Db::name('visit_line')->field('content')->where($where)->select();
         if($line){
-            return success($doctor);
+            return success($line);
         }else{
             return emptyResult();
         }
 
     }
+
 
 }
