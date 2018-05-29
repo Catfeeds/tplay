@@ -57,8 +57,8 @@ class Doctorcenter extends Controller
         }*/
         $post = $this->request->param();
         $model = new visitModel();
-        $where['STATUS']= input('status');
-        //$where['DOCTOR_CODE'] = $doctor_code;
+        $where['status']= input('status');
+        //$where['doctor_code'] = $doctor_code;
         $res = $model->where($where)->order('create_time desc')->select();
 
         if($res){

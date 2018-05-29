@@ -12,6 +12,8 @@ use app\index\model\Feedback;
 use \think\Controller;
 use app\index\model\UserPatient as userPatientModel;//问诊人信息模型
 use app\index\model\Favorite as favoriteModel;//收藏模型
+use app\index\model\Visit as visitModel;//问诊模型
+use app\index\model\VisitLine;
 use app\index\model\User;
 use think\Session;
 
@@ -39,6 +41,16 @@ class Membercenter extends Controller
      */
     public function inquisition()
     {
+        $model = new visitModel();
+        $where['status']= input('status');
+        $where['user_code'] = Session::get('user_code');
+        $res = $model->where($where)->order('create_time desc')->select();
+
+        if($res){
+            return success($res);
+        }else{
+            return emptyResult();
+        }
 
     }
 
@@ -47,7 +59,15 @@ class Membercenter extends Controller
      */
     public function inquisitionDetail()
     {
-
+        $where['visit_id'] = input('id');
+        $where['user_code'] = Session::get('user_code');
+        $model = new VisitLine();
+        $res = $model->where($where)->find();
+        if($res){
+            return success($res);
+        }else{
+            return emptyResult();
+        }
     }
 
 
