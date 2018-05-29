@@ -16,6 +16,7 @@ use app\index\model\Visit as visitModel;//问诊模型
 use think\Session;
 use app\index\model\PaymentLine as paymentLineModel;//付款队列
 use app\index\model\Account as accountModel;//账户模型
+use app\index\model\Doctor as doctorModel;
 
 class Doctorcenter extends Controller
 {
@@ -160,6 +161,14 @@ class Doctorcenter extends Controller
      */
     public function code()
     {
+        $model = new doctorModel();
+        $where['code'] = Session::get('code');
+        $res = $model->where($where)->find();
+        if($res){
+            return success($res);
+        }else{
+            return failMsg('');
+        }
 
     }
 
