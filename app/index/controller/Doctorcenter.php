@@ -9,7 +9,9 @@
 
 namespace app\index\controller;
 
+use think\Config;
 use \think\Db;
+use think\Request;
 use \think\Controller;
 use \think\Response\json;
 use app\index\model\Visit as visitModel;//问诊模型
@@ -163,11 +165,71 @@ class Doctorcenter extends Controller
     {
         $model = new doctorModel();
         $where['code'] = Session::get('code');
-        $res = $model->where($where)->find();
+        $res = $model->field('aq_path,aq_path_dt,aq_path_url,gzh_qr_path')->where($where)->find();
         if($res){
             return success($res);
         }else{
-            return failMsg('');
+            return failMsg('查询失败');
+        }
+
+    }
+
+    /**
+     *生成二维码
+     */
+
+    public  function createCode(){
+
+        $key="c_c83aFnkpnMkrIS2zlyDIdprzpCn1cC0NbRaw7wWlJE";
+        //$weburl=$_POST['url'];//网址 例如：http://www.guanguihua.cc
+        $id = Session::get('user_id');
+        $weburl = Config::get('baseUrl')."index/doctor/detail/?id=$id";
+        $size=input('size');//尺寸大小 单位：px
+        $text=input('text');//内容 例如：数字、汉字、字母
+        $color=input('color');//前景颜色 例如：ccc或red
+        $bgcolor=input('bgcolor');//背景颜色 例如：ccc或red
+        /*
+        $logo=$_FILES['logo']['tmp_name'];//logo图
+        if(move_uploaded_file($logo, "upload/".$_FILES['logo']['name'])){
+            $logo=$_SERVER['HTTP_HOST']."upload/".$_FILES['logo']['name'];
+        }*/
+
+        $file = request()->file('logo');
+        if (empty($file)) {
+            return failMsg('请选择上传文件');
+        }
+        //移动到框架应用根目录/public/uploads/ 目录下
+        $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads');
+        if (!$info) {
+            //上传失败获取错误信息
+           return failMsg($file->getError());
+        }
+
+
+        $url="http://www.2d-code.cn/2dcode/api.php?key=$key";
+        if($weburl){
+            $url.="&url=$weburl";
+        }
+        if($size){
+            $url.="&size=$size";
+        }
+        if($text){
+            $url.="&text=$text";
+        }
+        if($color){
+            $url.="&color=$color";
+        }
+        if($bgcolor){
+            $url.="&bgcolor=$bgcolor";
+        }
+        if($info){
+            $url.="&logo=$info->getFilename()";
+        }
+        //echo "<a href='$url'><img src='$url'/></a>";
+        if($url){
+            return success($url);
+        }else{
+            return failMsg('生成失败');
         }
 
     }
