@@ -24,6 +24,12 @@ class Membercenter extends Controller
      */
     public function index()
     {
+        $user_id = Session::get('user_id');
+        //检查是否已登录
+        if(!$user_id){
+            return failLogin("您还未登录");
+        }
+
         //获取头像和昵称
         $where['user_code'] = Session::get('user_code');
         $model = new User();
@@ -41,6 +47,12 @@ class Membercenter extends Controller
      */
     public function inquisition()
     {
+        $user_id = Session::get('user_id');
+        //检查是否已登录
+        if(!$user_id){
+            return failLogin("您还未登录");
+        }
+
         $model = new visitModel();
         $where['status']= input('status');
         $where['user_code'] = Session::get('user_code');
@@ -59,6 +71,12 @@ class Membercenter extends Controller
      */
     public function inquisitionDetail()
     {
+        $user_id = Session::get('user_id');
+        //检查是否已登录
+        if(!$user_id){
+            return failLogin("您还未登录");
+        }
+
         $where['visit_id'] = input('id');
         $where['user_code'] = Session::get('user_code');
         $model = new VisitLine();
@@ -75,6 +93,12 @@ class Membercenter extends Controller
      * 关注医生
      */
     public function collect(){
+        $user_id = Session::get('user_id');
+        //检查是否已登录
+        if(!$user_id){
+            return failLogin("您还未登录");
+        }
+
         $data['user_code'] = Session::get('user_code');
         $data['follow_code'] = input('doctor_code');
         $model = new favoriteModel();
@@ -94,6 +118,12 @@ class Membercenter extends Controller
      */
     public function collection()
     {
+        $user_id = Session::get('user_id');
+        //检查是否已登录
+        if(!$user_id){
+            return failLogin("您还未登录");
+        }
+
         $where['user_code'] = Session::get('user_code');
         $model = new favoriteModel();
 
@@ -111,6 +141,12 @@ class Membercenter extends Controller
      */
     public function feedback()
     {
+        $user_id = Session::get('user_id');
+        //检查是否已登录
+        if(!$user_id){
+            return failLogin("您还未登录");
+        }
+
         $data['user_code'] = Session::get('user_code');
         $data['content'] = input('content');
         $model = new Feedback();
@@ -129,8 +165,12 @@ class Membercenter extends Controller
     public function detail()
     {
 
-        $model = new userPatientModel();
         $user_id = Session::get('user_id');
+        //检查是否已登录
+        if(!$user_id){
+            return failLogin("您还未登录");
+        }
+        $model = new userPatientModel();
         $res = $model->find($user_id);
         if($res){
             return success($res);
@@ -143,9 +183,16 @@ class Membercenter extends Controller
      * 修改个人信息
      */
     public function editDetail(){
+
+        $user_id = Session::get('user_id');
+        //检查是否已登录
+
+        if(!$user_id){
+            return failLogin("您还未登录");
+        }
         $data_post = $this->request->post();
         $model = new userPatientModel();
-        $where['user_id'] = Session::get('user_id');
+        $where['user_id'] = $user_id;
         $res = $model->where($where)->save($data_post);
         if($res){
             return success($res);

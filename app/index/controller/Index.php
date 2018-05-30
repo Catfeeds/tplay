@@ -2,6 +2,7 @@
 namespace app\index\controller;
 
 use app\index\model\User as userModel;//用户模型
+use app\index\model\Doctor;
 use \think\Session;
 use \think\Controller;
 
@@ -60,7 +61,77 @@ class Index extends Controller
         $post_data['user_id'] = $last_id;
         Session::set($token,$session_user_info);
         Session::set($session_user_info,$post_data);
+        Session::set('user_id',$post_data['user_id']);
+        Session::set('user_code',$post_data['code']);
         $post_data['token'] = $token;
+        return success($post_data);
+
+    }
+
+    /**
+     * 医生登录
+     */
+
+    public function login(){
+        $wx_user = new userModel();
+
+        $code = input('code');
+
+        $post_data['name']  = input('name');
+        $post_data['wx_nick_name'] = input('nick_name');
+        $post_data['wx_head_img_url'] = input('head_img');
+        $post_data['wx_sex'] = input('sex');
+        $post_data['wx_country'] = input('coutry');
+        $post_data['wx_city'] = input('city');
+        $post_data['wx_province']= input('province');
+
+
+        /*if(!$code){
+            return failMsg('code不能为空');
+        }
+        $res_wx = send_url(['code'=>$code]);
+        $res_wx = json_decode($res_wx,true);
+        if($res_wx['errcode']){
+            return failMsg('code失效');
+        }
+        $post_data['open_id_ur'] = $res_wx['openid'];
+        $post_data['union_id'] = $res_wx['unionid'];*/
+        $post_data['open_id_ur'] = input('openid');
+
+        //检查用户是否存在
+        $where['open_id_ur'] = $post_data['open_id_ur'];
+        $user_info = $wx_user->field('id')->where($where)->find();
+
+        if($user_info['id']){
+            $last_id = $user_info['id'];
+            $wx_user->save($post_data,['id'=>$user_info['id']]);
+        }else{
+            $wx_user->save($post_data);
+            $last_id = $wx_user->getLastInsID();
+        }
+        $session_user_info = md5($post_data['open_id_ur'].$last_id);
+        $token = md5($post_data['open_id_ur'].$last_id.time().microtime());
+
+        //设置登录信息
+        $post_data['user_id'] = $last_id;
+        Session::set($token,$session_user_info);
+        Session::set($session_user_info,$post_data);
+        Session::set('user_id',$post_data['user_id']);
+        Session::set('user_code',$post_data['code']);
+        $post_data['token'] = $token;
+
+        //查询该用户有没有doctor_code
+        $doctor = new Doctor();
+        $w['user_id'] = $post_data['user_id'];
+        $res = $doctor->where($w)->find();
+
+        if(!$res){
+            return failMsg('您还不是本平台医生，请先联系平台管理员');
+        }
+
+        $post_data['doctor_code'] = $res ['doctor_code'];
+        Session::set('doctor_code',$res ['doctor_code']);
+
         return success($post_data);
 
     }

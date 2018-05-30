@@ -23,7 +23,17 @@ use app\index\model\Doctor as doctorModel;
 class Doctorcenter extends Controller
 {
     /**
-     * @api               {get} /index/doctorcenter/index 接诊入口问题列表
+     * 个人主页
+     */
+    public function index()
+    {
+
+
+    }
+
+
+    /**
+     * @api               {get} /index/doctorcenter/quisition 接诊入口问题列表
      * @apiName           questionList
      * @apiGroup          DoctorCenter
      *
@@ -48,7 +58,7 @@ class Doctorcenter extends Controller
      * @apiError          msg       失败消息
      *
      */
-    public function index()
+    public function quisition()
     {
         //var_dump(Db::name('visit')->select());
         //检查参数
@@ -60,17 +70,15 @@ class Doctorcenter extends Controller
         }*/
         $post = $this->request->param();
         $model = new visitModel();
-        $where['status']= input('status');
+        $where['status'] = input('status');
         //$where['doctor_code'] = $doctor_code;
         $res = $model->where($where)->order('create_time desc')->select();
 
-        if($res){
+        if ($res) {
             return success($res);
-        }else{
+        } else {
             return emptyResult();
         }
-
-
 
 
     }
@@ -90,10 +98,10 @@ class Doctorcenter extends Controller
         $where['type'] = 'DT';
         $where['code'] = $doctor_code;
         $model = new accountModel();
-        $re = $model ->where($where)->sum('amount');
-        if($re){
+        $re = $model->where($where)->sum('amount');
+        if ($re) {
             return success($re);
-        }else{
+        } else {
             return failMsg('查询失败');
         }
 
@@ -115,9 +123,9 @@ class Doctorcenter extends Controller
         $where['code'] = $doctor_code;
         $model = new accountModel();
         $re = $model->field('id,order_code,amount,create_time')->where($where)->select();
-        if($re){
+        if ($re) {
             return success($re);
-        }else{
+        } else {
             return failMsg('查询失败');
         }
 
@@ -142,7 +150,7 @@ class Doctorcenter extends Controller
         $where['doctor_code'] = $doctor_code;
         $model = new paymentLineModel();
         $line = $model->where($where)->find();
-        if(!$line) return failMsg('你没有权限操作');
+        if (!$line) return failMsg('你没有权限操作');
 
         $data['name'] = input('name');//姓名
         $data['card_no'] = input('card_no');
@@ -150,9 +158,9 @@ class Doctorcenter extends Controller
         $data['amount'] = input('amount');
 
         $res = $model->save($data);
-        if($res){
+        if ($res) {
             return success($res);
-        }else{
+        } else {
             return failMsg('申请失败');
         }
 
@@ -166,9 +174,9 @@ class Doctorcenter extends Controller
         $model = new doctorModel();
         $where['code'] = Session::get('code');
         $res = $model->field('aq_path,aq_path_dt,aq_path_url,gzh_qr_path')->where($where)->find();
-        if($res){
+        if ($res) {
             return success($res);
-        }else{
+        } else {
             return failMsg('查询失败');
         }
 
@@ -178,16 +186,17 @@ class Doctorcenter extends Controller
      *生成二维码
      */
 
-    public  function createCode(){
+    public function createCode()
+    {
 
-        $key="c_c83aFnkpnMkrIS2zlyDIdprzpCn1cC0NbRaw7wWlJE";
+        $key = "c_c83aFnkpnMkrIS2zlyDIdprzpCn1cC0NbRaw7wWlJE";
         //$weburl=$_POST['url'];//网址 例如：http://www.guanguihua.cc
         $id = Session::get('user_id');
-        $weburl = Config::get('baseUrl')."index/doctor/detail/?id=$id";
-        $size=input('size');//尺寸大小 单位：px
-        $text=input('text');//内容 例如：数字、汉字、字母
-        $color=input('color');//前景颜色 例如：ccc或red
-        $bgcolor=input('bgcolor');//背景颜色 例如：ccc或red
+        $weburl = Config::get('baseUrl') . "index/doctor/detail/?id=$id";
+        $size = input('size');//尺寸大小 单位：px
+        $text = input('text');//内容 例如：数字、汉字、字母
+        $color = input('color');//前景颜色 例如：ccc或red
+        $bgcolor = input('bgcolor');//背景颜色 例如：ccc或red
         /*
         $logo=$_FILES['logo']['tmp_name'];//logo图
         if(move_uploaded_file($logo, "upload/".$_FILES['logo']['name'])){
@@ -202,33 +211,33 @@ class Doctorcenter extends Controller
         $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads');
         if (!$info) {
             //上传失败获取错误信息
-           return failMsg($file->getError());
+            return failMsg($file->getError());
         }
 
 
-        $url="http://www.2d-code.cn/2dcode/api.php?key=$key";
-        if($weburl){
-            $url.="&url=$weburl";
+        $url = "http://www.2d-code.cn/2dcode/api.php?key=$key";
+        if ($weburl) {
+            $url .= "&url=$weburl";
         }
-        if($size){
-            $url.="&size=$size";
+        if ($size) {
+            $url .= "&size=$size";
         }
-        if($text){
-            $url.="&text=$text";
+        if ($text) {
+            $url .= "&text=$text";
         }
-        if($color){
-            $url.="&color=$color";
+        if ($color) {
+            $url .= "&color=$color";
         }
-        if($bgcolor){
-            $url.="&bgcolor=$bgcolor";
+        if ($bgcolor) {
+            $url .= "&bgcolor=$bgcolor";
         }
-        if($info){
-            $url.="&logo=$info->getFilename()";
+        if ($info) {
+            $url .= "&logo=$info->getFilename()";
         }
         //echo "<a href='$url'><img src='$url'/></a>";
-        if($url){
+        if ($url) {
             return success($url);
-        }else{
+        } else {
             return failMsg('生成失败');
         }
 

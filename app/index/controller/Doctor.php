@@ -12,6 +12,7 @@ use \think\Controller;
 use app\index\model\Doctor as doctorModel;//医生模型
 use \think\db;
 use think\File;
+use think\Session;
 
 class Doctor extends Controller
 {
@@ -72,7 +73,22 @@ class Doctor extends Controller
         //获取文件的全路径
         $post_data['url'] = str_replace('\\', '/', $info->getPathname());//GetPathName返回文件路径(盘符+路径+文件名)
 
+
+        //向问诊表插入数据
+        $data['user_code'] = Session::get('user_code');
+        $data['doctor_code'] = input('doctor_code');
+        $data['origianl_price'] = input('origianl_price');
+        $data['actual_pay'] = input('actual_pay');
+
+        //向问诊明细表插入数据
+        $post_data['visit_id'] = '';
         $post_data['content']  = input('content');
+        $data['user_code'] = Session::get('user_code');
+        $data['doctor_code'] = input('doctor_code');
+
+        //向附件表插入图片或视频
+
+
 
 
 
