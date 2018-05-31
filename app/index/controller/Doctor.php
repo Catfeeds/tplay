@@ -8,6 +8,8 @@
  */
 
 namespace app\index\controller;
+use app\index\model\Visit;
+use app\index\model\VisitLine;
 use \think\Controller;
 use app\index\model\Doctor as doctorModel;//医生模型
 use \think\db;
@@ -58,7 +60,7 @@ class Doctor extends Controller
      */
     public function putQuestions()
     {
-        $file = request()->file('file');// 获取表单提交过来的文件
+        /*$file = request()->file('file');// 获取表单提交过来的文件
         $error = $_FILES['file']['error']; // 如果$_FILES['file']['error']>0,表示文件上传失败
         if($error){
             return failMsg('文件上传失败');
@@ -71,25 +73,82 @@ class Doctor extends Controller
         }
         $info = $file->move($dir);// 将文件上传指定目录
         //获取文件的全路径
-        $post_data['url'] = str_replace('\\', '/', $info->getPathname());//GetPathName返回文件路径(盘符+路径+文件名)
+        $post_data['url'] = str_replace('\\', '/', $info->getPathname());//GetPathName返回文件路径(盘符+路径+文件名)*/
 
+        $user_id = Session::get('user_id');
+        //检查是否已登录
+        if(!$user_id){
+            return failLogin("您还未登录");
+        }
 
-        //向问诊表插入数据
         $data['user_code'] = Session::get('user_code');
         $data['doctor_code'] = input('doctor_code');
         $data['origianl_price'] = input('origianl_price');
         $data['actual_pay'] = input('actual_pay');
+        $post_data['content']  = input('content');
+
+
+        //验证字段
+        $result = $this->validate(
+            [
+                'doctor_code'  => $data['doctor_code'],
+                'origianl_price' => $data['origianl_price'],
+                'content' => $post_data['content']
+
+            ],
+            [
+                'doctor_code'  => 'require',
+                'origianl_price'=>'require',
+                'content' => 'require'
+
+            ],
+            [
+                'doctor_code.require'  =>  '医生编号必须',
+                'origianl_price.require' =>'价格必须',
+                'content.require' =>'内容必须'
+
+            ]
+        );
+
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
+
+        //向问诊表插入数据
+        $visit = new Visit();
+
+        //检查是否存在
+        $where['user_code'] = $data['user_code'];
+        $where['doctor_code'] = $data['doctor_code'];
+        $info = $visit->field('id')->where($where)->find();
+
+        if($info['id']){
+            $visit_id = $info['id'];
+            $re = $visit->save($data,['id'=>$info['id']]);
+
+        }else{
+
+            $re = $visit->save($data);
+            $visit_id = $visit->getLastInsID();
+        }
+
+
+        if(!$re) return failMsg('操作失败');
+
 
         //向问诊明细表插入数据
-        $post_data['visit_id'] = '';
-        $post_data['content']  = input('content');
-        $data['user_code'] = Session::get('user_code');
-        $data['doctor_code'] = input('doctor_code');
+        $post_data['visit_id'] = $visit_id;
+        $post_data['user_code'] = $data['user_code'];
+
+        $visit_line = new VisitLine();
+        $re_line = $visit_line->save($post_data);
+        if(!$re_line) return failMsg('操作失败');
 
         //向附件表插入图片或视频
 
 
-
+        return success();
 
 
 
@@ -97,12 +156,41 @@ class Doctor extends Controller
     }
 
     /**
-     * 查看提问
+     * 查看提问列表
      */
     public function questions()
     {
-        $where['doctor_code'] = input('doctor_code');
-        $line = Db::name('visit_line')->field('content')->where($where)->select();
+
+        $where['doctor_code']= input('doctor_code');
+        //验证字段
+        $result = $this->validate(
+            [
+                'doctor_code'  => input('doctor_code'),
+            ],
+            [
+                'doctor_code'  => 'require',
+
+            ],
+            [
+                'doctor_code.require'  =>  '医生编号必须'
+
+            ]
+        );
+
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
+        //查询visit_id
+        $model = new Visit();
+        $ids = $model->field('id')->where($where)->select();
+        var_dump($ids);
+        exit;
+       //表示用户提问  医生编号为空，用户编号不为空
+
+        $where1="visit_id in($ids) and doctor_code = ''";
+
+        $line = Db::name('visit_line')->field('id,content')->where($where1)->order('create_time')->group('user_code')->select();
         if($line){
             return success($line);
         }else{
@@ -111,5 +199,12 @@ class Doctor extends Controller
 
     }
 
+    /**
+     * 查看某个问题的详情
+     */
+    public function questionDetail(){
+
+
+    }
 
 }

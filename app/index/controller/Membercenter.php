@@ -15,6 +15,7 @@ use app\index\model\Favorite as favoriteModel;//收藏模型
 use app\index\model\Visit as visitModel;//问诊模型
 use app\index\model\VisitLine;
 use app\index\model\User;
+use app\index\model\Doctor;
 use think\Session;
 
 class Membercenter extends Controller
@@ -78,6 +79,26 @@ class Membercenter extends Controller
         }
 
         $where['visit_id'] = input('id');
+        //验证字段
+        $result = $this->validate(
+            [
+                'id'  => input('id'),
+            ],
+            [
+                'id'  => 'require',
+
+            ],
+            [
+                'id.require'  =>  '问诊编号必须'
+
+            ]
+        );
+
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
+
         $where['user_code'] = Session::get('user_code');
         $model = new VisitLine();
         $res = $model->where($where)->find();
@@ -101,10 +122,35 @@ class Membercenter extends Controller
 
         $data['user_code'] = Session::get('user_code');
         $data['follow_code'] = input('doctor_code');
+        //验证字段
+        $result = $this->validate(
+            [
+                'follow_code'  => $data['follow_code'],
+            ],
+            [
+                'follow_code'  => 'require',
+
+            ],
+            [
+                'follow_code.require'  =>  '医生编号必须'
+
+            ]
+        );
+
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
+
+        //查询该编号是否存在
+        $doctor = new Doctor();
+        $r = $doctor ->where(['code'=>$data['follow_code']])->find();
+        if(!$r) return failMsg('被关注的信息不存在');
+
         $model = new favoriteModel();
         $res = $model->save($data);
         if($res){
-            return success($res);
+            return success($data);
         }else{
             return failMsg('关注失败');
         }
@@ -148,11 +194,31 @@ class Membercenter extends Controller
         }
 
         $data['user_code'] = Session::get('user_code');
+
         $data['content'] = input('content');
+
+        $result = $this->validate(
+            [
+                'content'  => $data['content'],
+            ],
+            [
+                'content'  => 'require',
+
+            ],
+            [
+                'content.require'  =>  '内容必须'
+
+            ]
+        );
+
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
         $model = new Feedback();
         $res = $model ->save($data);
         if($res){
-            return success($res);
+            return success($data);
         }else{
             return failMsg('提交失败');
         }
@@ -170,8 +236,11 @@ class Membercenter extends Controller
         if(!$user_id){
             return failLogin("您还未登录");
         }
+
         $model = new userPatientModel();
-        $res = $model->find($user_id);
+        $where['user_id'] = $user_id;
+        $res = $model->where($where)->select();
+
         if($res){
             return success($res);
         }else{
@@ -190,12 +259,42 @@ class Membercenter extends Controller
         if(!$user_id){
             return failLogin("您还未登录");
         }
-        $data_post = $this->request->post();
+        //检查是否存在
         $model = new userPatientModel();
         $where['user_id'] = $user_id;
-        $res = $model->where($where)->save($data_post);
+        $r = $model->where($where)->find();
+        $data_post = $this->request->post();
+        $result = $this->validate(
+            [
+                'name'  => input('name'),
+                'phone'  => input('phone'),
+
+            ],
+            [
+                'name'  => 'require|max:25',
+                'phone'  => 'require',
+            ],
+            [
+                'name.require'  =>  '姓名必须'
+            ]
+        );
+
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
+
+        if($r){
+            $res = $model->save($data_post,['user_id'=>$user_id]);
+        }else{
+            $data_post['user_id'] = $user_id;
+            $res = $model->save($data_post);
+        }
+
+
+
         if($res){
-            return success($res);
+            return success($data_post);
         }else{
             return failMsg('修改失败');
         }

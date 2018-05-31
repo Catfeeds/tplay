@@ -315,7 +315,6 @@ function paraFilter ( &$para ) {
      * 小程序获取二维码
      * @param $param
      * @return bool|mixed
-     * time 2017.10.26
      */
     function  get_wxa_code($param){
         $tokenInfo = $this->set_token()['access_token'];

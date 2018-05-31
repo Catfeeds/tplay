@@ -23,10 +23,40 @@ use app\index\model\Doctor as doctorModel;
 class Doctorcenter extends Controller
 {
     /**
-     * 个人主页
+     * 个人主页 医生的个人主页 详细信息
      */
     public function index()
     {
+        $user_id = Session::get('user_id');
+        //检查是否已登录
+        if(!$user_id){
+            return failLogin("您还未登录");
+        }
+
+        $doctor_code  = input('doctor_code');
+        //验证字段
+        $result = $this->validate(
+            [
+                'doctor_code'  => input('doctor_code'),
+            ],
+            [
+                'doctor_code'  => 'require',
+
+            ],
+            [
+                'doctor_code.require'  =>  '医生编号必须'
+
+            ]
+        );
+
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
+
+        $model = new doctorModel;
+        $model->select();
+
 
 
     }

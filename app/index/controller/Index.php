@@ -20,16 +20,7 @@ class Index extends Controller
     public function dologin(){
         $wx_user = new userModel();
 
-        $code = input('code');
-
-        $post_data['name']  = input('name');
-        $post_data['wx_nick_name'] = input('nick_name');
-        $post_data['wx_head_img_url'] = input('head_img');
-        $post_data['wx_sex'] = input('sex');
-        $post_data['wx_country'] = input('coutry');
-        $post_data['wx_city'] = input('city');
-        $post_data['wx_province']= input('province');
-
+        //$code = input('code');
 
         /*if(!$code){
             return failMsg('code不能为空');
@@ -43,6 +34,48 @@ class Index extends Controller
         $post_data['union_id'] = $res_wx['unionid'];*/
         $post_data['open_id_ur'] = input('openid');
 
+        $post_data['name']  = input('name');
+        $post_data['wx_nick_name'] = input('nick_name');
+        $post_data['wx_head_img_url'] = input('head_img');
+        $post_data['wx_sex'] = input('sex');
+        $post_data['wx_country'] = input('country');
+        $post_data['wx_city'] = input('city');
+        $post_data['wx_province']= input('province');
+
+        $result = $this->validate(
+            [
+                'name'  => $post_data['name'],
+                'nick_name' => $post_data['wx_nick_name'],
+                'head_img'   => $post_data['wx_head_img_url'],
+                'sex'   => $post_data['wx_sex'],
+                'country'   => $post_data['wx_country'],
+                'city'   => $post_data['wx_city'],
+                'province'   => $post_data['wx_province'],
+                'open_id_ur' => $post_data['open_id_ur']
+            ],
+            [
+                'name'  => 'require|max:25',
+                'nick_name'   => 'require',
+                'head_img'   => 'require',
+                'sex'   => 'require',
+                'country'   => 'require',
+                'city'   => 'require',
+                'province'   => 'require',
+                'open_id_ur' =>'require'
+
+
+            ],
+            [
+                'name.require'  =>  '用户名必须'
+
+            ]
+        );
+
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
+
         //检查用户是否存在
         $where['open_id_ur'] = $post_data['open_id_ur'];
         $user_info = $wx_user->field('id')->where($where)->find();
@@ -50,10 +83,16 @@ class Index extends Controller
         if($user_info['id']){
             $last_id = $user_info['id'];
             $wx_user->save($post_data,['id'=>$user_info['id']]);
+            $res_code = $wx_user->field('code')->find($user_info['id']);
+            $post_data['code'] = $res_code['code'];
+
         }else{
+            $post_data['code'] = 'u'.date('Ymd') . rand(10000000,99999999);
+
             $wx_user->save($post_data);
             $last_id = $wx_user->getLastInsID();
         }
+
         $session_user_info = md5($post_data['open_id_ur'].$last_id);
         $token = md5($post_data['open_id_ur'].$last_id.time().microtime());
 
@@ -75,16 +114,7 @@ class Index extends Controller
     public function login(){
         $wx_user = new userModel();
 
-        $code = input('code');
-
-        $post_data['name']  = input('name');
-        $post_data['wx_nick_name'] = input('nick_name');
-        $post_data['wx_head_img_url'] = input('head_img');
-        $post_data['wx_sex'] = input('sex');
-        $post_data['wx_country'] = input('coutry');
-        $post_data['wx_city'] = input('city');
-        $post_data['wx_province']= input('province');
-
+        //$code = input('code');
 
         /*if(!$code){
             return failMsg('code不能为空');
@@ -97,6 +127,49 @@ class Index extends Controller
         $post_data['open_id_ur'] = $res_wx['openid'];
         $post_data['union_id'] = $res_wx['unionid'];*/
         $post_data['open_id_ur'] = input('openid');
+
+        $post_data['name']  = input('name');
+        $post_data['wx_nick_name'] = input('nick_name');
+        $post_data['wx_head_img_url'] = input('head_img');
+        $post_data['wx_sex'] = input('sex');
+        $post_data['wx_country'] = input('country');
+        $post_data['wx_city'] = input('city');
+        $post_data['wx_province']= input('province');
+
+
+        $result = $this->validate(
+            [
+                'name'  => $post_data['name'],
+                'nick_name' => $post_data['wx_nick_name'],
+                'head_img'   => $post_data['wx_head_img_url'],
+                'sex'   => $post_data['wx_sex'],
+                'country'   => $post_data['wx_country'],
+                'city'   => $post_data['wx_city'],
+                'province'   => $post_data['wx_province'],
+                'open_id_ur' => $post_data['open_id_ur']
+            ],
+            [
+                'name'  => 'require|max:25',
+                'nick_name'   => 'require',
+                'head_img'   => 'require',
+                'sex'   => 'require',
+                'country'   => 'require',
+                'city'   => 'require',
+                'province'   => 'require',
+                'open_id_ur' =>'require'
+
+
+            ],
+            [
+                'name.require'  =>  '用户名必须'
+
+            ]
+        );
+
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
 
         //检查用户是否存在
         $where['open_id_ur'] = $post_data['open_id_ur'];
@@ -126,7 +199,7 @@ class Index extends Controller
         $res = $doctor->where($w)->find();
 
         if(!$res){
-            return failMsg('您还不是本平台医生，请先联系平台管理员');
+            return failMsg('您还不是本平台医生，请先联系平台管理员,微信号minebuty');
         }
 
         $post_data['doctor_code'] = $res ['doctor_code'];
