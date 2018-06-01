@@ -231,18 +231,18 @@ function paraFilter ( &$para ) {
      * @return mixed
      */
    function set_token(){
-        $access_token = S('access_token');
+        $access_token = Session('access_token');
         $tokenInfo = json_decode($access_token,true);
         //判断access_token是否失效
         if($tokenInfo['expires_in'] - time() < 2000){
             //重新获取access_token
-            $access_token = $this->get_access_token(config('C_APPID'),config('C_APPSECRET'));
+            $access_token = get_access_token(config('C_APPID'),config('C_APPSECRET'));
             $tokenInfo = json_decode($access_token,true);
             $tokenInfo['expires_in'] = $tokenInfo['expires_in']+time();
-            if($tokenInfo['errcode']){
+            if(isset($tokenInfo['errcode'])){
                 return $tokenInfo;
             }
-            S('access_token',json_encode($tokenInfo,JSON_UNESCAPED_UNICODE));
+            Session('access_token',json_encode($tokenInfo,JSON_UNESCAPED_UNICODE));
         }
         return json_decode($access_token,true);
     }
@@ -317,20 +317,25 @@ function paraFilter ( &$para ) {
      * @return bool|mixed
      */
     function  get_wxa_code($param){
-        $tokenInfo = $this->set_token()['access_token'];
+        $tokenInfo = set_token()['access_token'];
+
         //获取二维码
-//        $url = 'https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token='.$tokenInfo;
-        $url = 'https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token='.$tokenInfo;
-        $parm['page'] = $param['page'] ?: 'pages/index/index';
+        $url = 'https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token='.$tokenInfo;
+        //$url = 'https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token='.$tokenInfo;
+        $parm['path'] = $param['page'] ?: 'pages/index/index';
         $parm['width'] = $param['width'] ?: 430;
         if (isset($param['scene'])) {
             $parm['scene'] = $param['scene'];
         }
 //        $parm['auto_color'] =  false;
+
         if(!$param['page']){
+
             return false;
         }
-//        var_dump(json_encode($parm,JSON_UNESCAPED_SLASHES));
+        //var_dump(json_encode($parm,JSON_UNESCAPED_SLASHES));
+        //exit;
+
         return curl_data($url,json_encode($parm));
     }
     /**
@@ -339,7 +344,7 @@ function paraFilter ( &$para ) {
      * @return mixed
      */
     function send_template($param){
-        $tokenInfo = $this->set_token()['access_token'];
+        $tokenInfo = set_token()['access_token'];
         $url='https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token='.$tokenInfo;
         return curl_data($url,json_encode($param));
     }

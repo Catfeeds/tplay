@@ -218,59 +218,39 @@ class Doctorcenter extends Controller
 
     public function createCode()
     {
+        $post_data['page'] = 'pages/index/index';
+        $post_data['width'] = input('width');
+        $re = get_wxa_code($post_data);
 
-        $key = "c_c83aFnkpnMkrIS2zlyDIdprzpCn1cC0NbRaw7wWlJE";
-        //$weburl=$_POST['url'];//网址 例如：http://www.guanguihua.cc
-        $id = Session::get('user_id');
-        $weburl = Config::get('baseUrl') . "index/doctor/detail/?id=$id";
-        $size = input('size');//尺寸大小 单位：px
-        $text = input('text');//内容 例如：数字、汉字、字母
-        $color = input('color');//前景颜色 例如：ccc或red
-        $bgcolor = input('bgcolor');//背景颜色 例如：ccc或red
-        /*
-        $logo=$_FILES['logo']['tmp_name'];//logo图
-        if(move_uploaded_file($logo, "upload/".$_FILES['logo']['name'])){
-            $logo=$_SERVER['HTTP_HOST']."upload/".$_FILES['logo']['name'];
-        }*/
+        //保存地址
 
-        $file = request()->file('logo');
-        if (empty($file)) {
-            return failMsg('请选择上传文件');
-        }
-        //移动到框架应用根目录/public/uploads/ 目录下
-        $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads');
-        if (!$info) {
-            //上传失败获取错误信息
-            return failMsg($file->getError());
-        }
+        $imgDir = Config::get('upload_url');
 
 
-        $url = "http://www.2d-code.cn/2dcode/api.php?key=$key";
-        if ($weburl) {
-            $url .= "&url=$weburl";
-        }
-        if ($size) {
-            $url .= "&size=$size";
-        }
-        if ($text) {
-            $url .= "&text=$text";
-        }
-        if ($color) {
-            $url .= "&color=$color";
-        }
-        if ($bgcolor) {
-            $url .= "&bgcolor=$bgcolor";
-        }
-        if ($info) {
-            $url .= "&logo=$info->getFilename()";
-        }
-        //echo "<a href='$url'><img src='$url'/></a>";
-        if ($url) {
-            return success($url);
+        //要生成的图片名字
+
+        $filename = date("Ym")."/".md5(time().mt_rand(10, 99)).".jpg"; //新图片名称
+
+        $newFilePath = $imgDir.$filename;
+
+
+        $newFile = fopen($newFilePath,"w"); //打开文件准备写入
+
+        fwrite($newFile,$re); //写入二进制流到文件
+
+        fclose($newFile); //关闭文件
+
+
+        if ($re) {
+            return  $filename;
         } else {
             return failMsg('生成失败');
         }
 
     }
+
+
+
+
 
 }

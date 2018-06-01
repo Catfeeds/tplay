@@ -146,7 +146,7 @@ class Index extends Controller
                 'country'   => $post_data['wx_country'],
                 'city'   => $post_data['wx_city'],
                 'province'   => $post_data['wx_province'],
-                'open_id_ur' => $post_data['open_id_ur']
+                'open_id_dt' => $post_data['open_id_dt']
             ],
             [
                 'name'  => 'require|max:25',
@@ -156,7 +156,7 @@ class Index extends Controller
                 'country'   => 'require',
                 'city'   => 'require',
                 'province'   => 'require',
-                'open_id_ur' =>'require'
+                'open_id_dt' =>'require'
 
 
             ],
@@ -190,7 +190,6 @@ class Index extends Controller
         Session::set($token,$session_user_info);
         Session::set($session_user_info,$post_data);
         Session::set('user_id',$post_data['user_id']);
-        Session::set('user_code',$post_data['code']);
         $post_data['token'] = $token;
 
         //查询该用户有没有doctor_code
@@ -204,6 +203,7 @@ class Index extends Controller
 
         $post_data['doctor_code'] = $res ['doctor_code'];
         Session::set('doctor_code',$res ['doctor_code']);
+        Session::set('openid',$post_data['open_id_dt']);
 
         return success($post_data);
 
