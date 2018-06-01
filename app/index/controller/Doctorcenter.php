@@ -33,30 +33,16 @@ class Doctorcenter extends Controller
             return failLogin("您还未登录");
         }
 
-        $doctor_code  = input('doctor_code');
-        //验证字段
-        $result = $this->validate(
-            [
-                'doctor_code'  => input('doctor_code'),
-            ],
-            [
-                'doctor_code'  => 'require',
+        $where['code']  = Session::get('doctor_code');
 
-            ],
-            [
-                'doctor_code.require'  =>  '医生编号必须'
-
-            ]
-        );
-
-        if(true !== $result){
-            // 验证失败 输出错误信息
-            return failMsg($result);
-        }
 
         $model = new doctorModel;
-        $model->select();
-
+        $res =$model->field('name,head_img,title,job_period,info,auth_type,hospital_code,department_code')->where($where)->select();
+        if($res){
+            return success($res);
+        }else{
+            return emptyResult();
+        }
 
 
     }
@@ -367,6 +353,48 @@ class Doctorcenter extends Controller
 
     }
 
+    /**
+     * 服务定价
+     */
+    public function  setPrice(){
+        $user_id = Session::get('user_id');
+        //检查是否已登录
+        if(!$user_id){
+            return failLogin("您还未登录");
+        }
+        $doctor_code = Session::get('doctor_code');
+
+        $post_data['original_price'] =input('price');
+        $result = $this->validate(
+            [
+                'price'  => $post_data['original_price'],
+            ],
+            [
+                'price'  => 'require',
+
+            ],
+            [
+                'price.require'  =>  '价格必须'
+
+            ]
+        );
+
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
+
+        $model = new doctorModel();
+        $res = $model ->save($post_data,['code'=>$doctor_code]);
+        if($res){
+            return success($post_data);
+        }else{
+            return failMsg('设置失败');
+        }
+
+
+
+    }
 
 
 
