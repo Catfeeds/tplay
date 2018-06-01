@@ -9,7 +9,7 @@
 namespace app\index\model;
 use \think\Model;
 
-class PaymentLine extends Model
+class WxPaymentLine extends Model
 {
 
 }

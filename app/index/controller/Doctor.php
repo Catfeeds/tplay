@@ -183,9 +183,15 @@ class Doctor extends Controller
         }
         //查询visit_id
         $model = new Visit();
-        $ids = $model->field('id')->where($where)->select();
-        var_dump($ids);
-        exit;
+        $arr = $model->field('id')->where($where)->select();
+        if(!$arr) return emptyResult();
+        $res = json_decode(json_encode($arr),true);
+        $ids='';
+        foreach ($res as $v){
+            $ids .= $v['id'].',';
+        }
+        $ids = substr($ids,0,strlen($ids)-1);
+
        //表示用户提问  医生编号为空，用户编号不为空
 
         $where1="visit_id in($ids) and doctor_code = ''";

@@ -32,9 +32,10 @@ class Membercenter extends Controller
         }
 
         //获取头像和昵称
-        $where['user_code'] = Session::get('user_code');
+        $where['code'] = Session::get('user_code');
         $model = new User();
-        $res = $model->field('name,wx_head_img_url')->where($where)->find();
+        $res = $model->field('wx_nick_name,wx_head_img_url')->where($where)->find()->toArray();
+
         if($res){
             return success($res);
         }else{
@@ -57,6 +58,25 @@ class Membercenter extends Controller
         $model = new visitModel();
         $where['status']= input('status');
         $where['user_code'] = Session::get('user_code');
+        //验证字段
+        $result = $this->validate(
+            [
+                'status'  => input('status'),
+            ],
+            [
+                'status'  => 'require',
+
+            ],
+            [
+                'status.require'  =>  '状态必须'
+
+            ]
+        );
+
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
         $res = $model->where($where)->order('create_time desc')->select();
 
         if($res){
@@ -100,8 +120,9 @@ class Membercenter extends Controller
         }
 
         $where['user_code'] = Session::get('user_code');
+
         $model = new VisitLine();
-        $res = $model->where($where)->find();
+        $res = $model->where($where)->select();
         if($res){
             return success($res);
         }else{
@@ -238,6 +259,7 @@ class Membercenter extends Controller
         }
 
         $model = new userPatientModel();
+
         $where['user_id'] = $user_id;
         $res = $model->where($where)->select();
 

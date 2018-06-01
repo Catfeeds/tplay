@@ -124,9 +124,9 @@ class Index extends Controller
         if($res_wx['errcode']){
             return failMsg('code失效');
         }
-        $post_data['open_id_ur'] = $res_wx['openid'];
+        $post_data['open_id_dt'] = $res_wx['openid'];
         $post_data['union_id'] = $res_wx['unionid'];*/
-        $post_data['open_id_ur'] = input('openid');
+        $post_data['open_id_dt'] = input('openid');
 
         $post_data['name']  = input('name');
         $post_data['wx_nick_name'] = input('nick_name');
