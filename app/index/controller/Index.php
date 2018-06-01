@@ -161,7 +161,8 @@ class Index extends Controller
 
             ],
             [
-                'name.require'  =>  '用户名必须'
+                'name.require'  =>  '用户名必须',
+                'open_id_dt.require'=>'openid不能为空'
 
             ]
         );
@@ -172,7 +173,7 @@ class Index extends Controller
         }
 
         //检查用户是否存在
-        $where['open_id_ur'] = $post_data['open_id_ur'];
+        $where['open_id_dt'] = $post_data['open_id_dt'];
         $user_info = $wx_user->field('id')->where($where)->find();
 
         if($user_info['id']){
@@ -182,8 +183,8 @@ class Index extends Controller
             $wx_user->save($post_data);
             $last_id = $wx_user->getLastInsID();
         }
-        $session_user_info = md5($post_data['open_id_ur'].$last_id);
-        $token = md5($post_data['open_id_ur'].$last_id.time().microtime());
+        $session_user_info = md5($post_data['open_id_dt'].$last_id);
+        $token = md5($post_data['open_id_dt'].$last_id.time().microtime());
 
         //设置登录信息
         $post_data['user_id'] = $last_id;
@@ -201,8 +202,8 @@ class Index extends Controller
             return failMsg('您还不是本平台医生，请先联系平台管理员,微信号minebuty');
         }
 
-        $post_data['doctor_code'] = $res ['doctor_code'];
-        Session::set('doctor_code',$res ['doctor_code']);
+        $post_data['doctor_code'] = $res ['code'];
+        Session::set('doctor_code',$res ['code']);
         Session::set('openid',$post_data['open_id_dt']);
 
         return success($post_data);
