@@ -148,6 +148,9 @@ class Doctor extends Controller
         //向附件表插入图片或视频
 
 
+        //首次提问  向账户表插入一条收入记录
+
+
         return success();
 
 
