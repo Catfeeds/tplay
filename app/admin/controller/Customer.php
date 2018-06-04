@@ -40,7 +40,7 @@ class Customer extends Permissions
             $where['create_time'] = [['>=',$min_time],['<=',$max_time]];
         }
 
-        $user = $model->where($where)->select();
+        $user = $model->where($where)->order('create_time desc')->paginate(20);
 
         $this->assign('user',$user);
         return $this->fetch();
@@ -84,7 +84,7 @@ class Customer extends Permissions
         if($this->request->isAjax()) {
             $id = $this->request->has('id') ? $this->request->param('id', 0, 'intval') : 0;
             $model = new User();
-            $data['status'] = 'I';
+            $data['status'] = 'D';
             $r = $model ->save($data,['id'=>$id]);
             if(false == $r) {
                 return $this->error('删除失败');

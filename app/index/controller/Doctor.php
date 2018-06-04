@@ -26,10 +26,11 @@ class Doctor extends Controller
         //实例化医生模型
         $model = new doctorModel();
 
-        $post = input('page');
+        $page = input('page','1');
+        $pagesize = input('pagesize','5');
 
 
-        $doctor =  $model->field('id,name,head_img,title,hospital_code,department_code,original_price')->order('create_time desc') ->select();
+        $doctor =  $model->field('id,name,head_img,title,hospital_code,department_code,original_price')->limit(($page-1)*$pagesize,$pagesize)->order('create_time desc') ->select();
 
         if($doctor){
             return success($doctor);

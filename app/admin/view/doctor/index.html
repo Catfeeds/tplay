@@ -57,44 +57,49 @@
             <col width="100">
             <col width="150">
             <col width="150">
+            <col width="100">
             <col width="200">
             <col width="200">
             <col width="200">
             <col width="100">
+            <col width="100">
         </colgroup>
         <thead>
         <tr>
-            <th>ID</th>
+            <th>编号</th>
             <th>头像</th>
             <th>姓名</th>
-            <th>性别</th>
-            <th>昵称</th>
+            <th>职位</th>
+            <th>所属医院</th>
+            <th>从业年限</th>
+            <th>手机号</th>
+            <th>原价格</th>
             <th>创建时间</th>
-            <th>地址</th>
-            <th>手机</th>
+            <th>状态</th>
             <th>操作</th>
         </tr>
         </thead>
         <tbody>
         {volist name="doctor" id="vo"}
         <tr>
-            <td>{$vo.id}</td>
-            <td><a href="{$vo.wx_head_img_url}" class="tooltip"><img src="{$vo.wx_head_img_url}" width="20" height="20"></a></td>
+            <td>{$vo.code}</td>
+            <td><a href="{$vo.head_img|geturl}" class="tooltip"><img src="{$vo.head_img|geturl}" width="20" height="20"></a></td>
             <td>{$vo.name}</td>
-            <td>
-                {if condition="$vo.wx_sex eq 1 "} 女
-                {else /} 男
-                {/if}
-            </td>
-            <td>{$vo.wx_nick_name}</td>
+            <td>{$vo.title}</td>
+            <td>玛恩 </td>
+            <td>{$vo.job_period}年</td>
+            <td>{$vo.phone}</td>
+            <td>{$vo.original_price}</td>
             <td>{$vo.create_time}</td>
-            <td>{$vo.wx_country}-{$vo.wx_province}-{$vo.wx_city}</td>
             <td>
-                {$vo.phone}
+                {if condition="$vo.status eq 'I' "} 未激活
+                {elseif condition="$vo.status eq 'P' "/}审批中
+                {else /} 正常
+                {/if}
             </td>
             <td class="operation-menu">
                 <div class="layui-btn-group">
-                    <a href="{:url('customer/update',['id'=>$vo.id])}" class="layui-btn layui-btn-xs a_menu layui-btn-primary" id="{$vo.id}" style="margin-right: 0;font-size:12px;"><i class="layui-icon"></i></a>
+                    <a href="{:url('doctor/update',['id'=>$vo.id])}" class="layui-btn layui-btn-xs a_menu layui-btn-primary" id="{$vo.id}" style="margin-right: 0;font-size:12px;"><i class="layui-icon"></i></a>
                     <a class="layui-btn layui-btn-xs layui-btn-primary delete" id="{$vo.id}" style="margin-right: 0;font-size:12px;"><i class="layui-icon"></i></a>
                 </div>
             </td>
@@ -102,7 +107,7 @@
         {/volist}
         </tbody>
     </table>
-    <div style="padding:0 20px;"></div>
+    <div style="padding:0 20px;">{$doctor->render()}</div>
 
     {include file="public/foot"}
 

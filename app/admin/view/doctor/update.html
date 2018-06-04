@@ -15,7 +15,7 @@
     <div class="layui-tab">
         <ul class="layui-tab-title">
             <li><a href="{:url('admin/doctor/index')}" class="a_menu">医生管理</a></li>
-            <li class="layui-this">新增医生</li>
+            <li class="layui-this">修改医生</li>
         </ul>
     </div>
     <div style="margin-top: 20px;">
@@ -125,17 +125,6 @@
             </div>
         </div>
 
-        <div class="layui-form-item">
-            <label class="layui-form-label">关联用户</label>
-            <div class="layui-input-block" style="max-width:600px;">
-                <select name="user_id" lay-filter="aihao">
-                    <option value="">请选择用户</option>
-                    {volist name="user" id="vo"}
-                    <option value="{$vo.id}" {notempty name="$doctor.hospital_code"}{eq name="$doctor.hospital_code" value="$vo.id"} selected=""{/eq}{/notempty}>{$vo.name}</option>
-                    {/volist}
-                </select>
-            </div>
-        </div>
 
 
         <div class="layui-upload" id="upload-head_img">
@@ -157,6 +146,27 @@
                 <p id="demoText2"></p>
             </div>
         </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否加V认证</label>
+            <div class="layui-input-block" style="max-width:600px;">
+                <input name="auth_type" autocomplete="off" placeholder="为''空字符串表示‘未认证’，为'V'表示‘加V认证’" class="layui-input" type="text" {notempty name="$doctor.auth_type"}value="{$doctor.auth_type}"{/notempty}>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">二维码</label>
+            <div class="layui-upload-list">
+                <label class="layui-form-label"></label>
+                <img class="layui-upload-img"  width="150" height="150" {notempty name="$doctor.aq_path"}src="{$doctor.aq_path|geturl}"{/notempty}>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">主页地址</label>
+            <div class="layui-input-block" style="max-width:600px;">
+                <input  autocomplete="off" readonly placeholder="主页地址" class="layui-input" type="text" {notempty name="$doctor.aq_path_url"}value="{$doctor.aq_path_url}"{/notempty}>
+            </div>
+        </div>
+
 
         <div class="layui-form-item layui-form-text">
             <label class="layui-form-label">备注</label>
@@ -235,7 +245,7 @@
             $(window).on('load', function() {
                 form.on('submit(admin)', function(data) {
                     $.ajax({
-                        url:"{:url('admin/doctor/add')}",
+                        url:"{:url('admin/doctor/update')}",
                         data:$('#doctor').serialize(),
                         type:'post',
                         async: false,
