@@ -74,6 +74,7 @@ class Doctor extends Controller
         if($doctor){
             foreach ($doctor as $k=>$v){
                 $doctor[$k]['head_img'] = geturl($v['head_img']);
+                $doctor[$k]['head_img'] = str_replace("\\","/",$doctor[$k]['head_img']);
             }
             return success($doctor);
         }else{
