@@ -20,9 +20,9 @@ class Index extends Controller
     public function dologin(){
         $wx_user = new userModel();
 
-        //$code = input('code');
+        $code = input('code');
 
-        /*if(!$code){
+        if(!$code){
             return failMsg('code不能为空');
         }
         $res_wx = send_url(['code'=>$code]);
@@ -31,8 +31,8 @@ class Index extends Controller
             return failMsg('code失效');
         }
         $post_data['open_id_ur'] = $res_wx['openid'];
-        $post_data['union_id'] = $res_wx['unionid'];*/
-        $post_data['open_id_ur'] = input('openid');
+        $post_data['union_id'] = $res_wx['unionid'];
+
 
         $post_data['name']  = input('name');
         $post_data['wx_nick_name'] = input('nick_name');
@@ -114,9 +114,9 @@ class Index extends Controller
     public function login(){
         $wx_user = new userModel();
 
-        //$code = input('code');
+        $code = input('code');
 
-        /*if(!$code){
+        if(!$code){
             return failMsg('code不能为空');
         }
         $res_wx = send_url(['code'=>$code]);
@@ -125,8 +125,8 @@ class Index extends Controller
             return failMsg('code失效');
         }
         $post_data['open_id_dt'] = $res_wx['openid'];
-        $post_data['union_id'] = $res_wx['unionid'];*/
-        $post_data['open_id_dt'] = input('openid');
+        $post_data['union_id'] = $res_wx['unionid'];
+        //$post_data['open_id_dt'] = input('openid');
 
         $post_data['name']  = input('name');
         $post_data['wx_nick_name'] = input('nick_name');
