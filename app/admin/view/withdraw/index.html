@@ -93,7 +93,10 @@
             <td>{$vo.remark}</td>
             <td class="operation-menu">
                 <div class="layui-btn-group">
+                    {if condition="$vo.status eq 'P' "}
                     <a href="{:url('withdraw/update',['id'=>$vo.id])}" class="layui-btn layui-btn-xs a_menu layui-btn-primary" id="{$vo.id}" style="margin-right: 0;font-size:12px;"><i class="layui-icon"></i></a>
+                    {else /}
+                    {/if}
 
                 </div>
             </td>
