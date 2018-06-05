@@ -35,6 +35,7 @@ class Doctor extends Controller
         if($doctor){
             foreach ($doctor as $k=>$v){
                 $doctor[$k]['head_img'] = geturl($v['head_img']);
+                $doctor[$k]['head_img'] = str_replace("\\","/",$doctor[$k]['head_img']);
             }
 
             return success($doctor);
@@ -86,13 +87,18 @@ class Doctor extends Controller
      */
     public function putQuestions()
     {
-        /*$file = request()->file('file');// 获取表单提交过来的文件
-        $error = $_FILES['file']['error']; // 如果$_FILES['file']['error']>0,表示文件上传失败
-        if($error){
-            return failMsg('文件上传失败');
+       // 获取表单提交过来的文件
+        if($this->request->file('file')){
+            $file = $this->request->file('file');
+        }else{
+            $res['code']=1;
+            $res['msg']='没有上传文件';
+            return json($res);
         }
+
         //上传的时候的原文件名
         $filename = $file -> getInfo()['name'];
+        var_dump($filename);
         $dir = config('upload_path');// 自定义文件上传路径
         if (!is_dir($dir)) {
             mkdir($dir,0777,true);
