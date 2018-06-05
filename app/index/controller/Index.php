@@ -31,7 +31,7 @@ class Index extends Controller
             return failMsg('code失效');
         }
         $post_data['open_id_ur'] = $res_wx['openid'];
-        $post_data['union_id'] = $res_wx['unionid'];
+        $post_data['union_id'] = $res_wx['session_key'];
 
 
         $post_data['name']  = input('name');
@@ -126,7 +126,7 @@ class Index extends Controller
             return failMsg('code失效');
         }*/
         $post_data['open_id_dt'] = $res_wx['openid'];
-        $post_data['union_id'] = $res_wx['unionid'];
+        $post_data['union_id'] = $res_wx['session_key'];
         //$post_data['open_id_dt'] = input('openid');
 
         $post_data['name']  = input('name');
