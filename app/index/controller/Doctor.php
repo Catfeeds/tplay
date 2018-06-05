@@ -33,6 +33,10 @@ class Doctor extends Controller
         $doctor =  $model->field('id,name,head_img,title,hospital_code,department_code,original_price')->limit(($page-1)*$pagesize,$pagesize)->order('create_time desc') ->select();
 
         if($doctor){
+            foreach ($doctor as $k=>$v){
+                $doctor[$k]['head_img'] = geturl($v['head_img']);
+            }
+
             return success($doctor);
         }else{
             return emptyResult();
@@ -47,8 +51,29 @@ class Doctor extends Controller
         //实例化医生模型
         $model = new doctorModel();
         $where['id'] = input('id');
+        //验证字段
+        $result = $this->validate(
+            [
+                'id'  => input('id'),
+            ],
+            [
+                'id'  => 'require',
+            ],
+            [
+                'id.require'  =>  '医生编号必须',
+            ]
+        );
+
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
+
         $doctor =  $model->where($where)->select();
         if($doctor){
+            foreach ($doctor as $k=>$v){
+                $doctor[$k]['head_img'] = geturl($v['head_img']);
+            }
             return success($doctor);
         }else{
             return emptyResult();
