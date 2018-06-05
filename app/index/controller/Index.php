@@ -27,7 +27,7 @@ class Index extends Controller
         }
         $res_wx = send_url(['code'=>$code]);
         $res_wx = json_decode($res_wx,true);
-        if($res_wx['errcode']){
+        if(isset($res_wx['errcode'])){
             return failMsg('code失效');
         }
         $post_data['open_id_ur'] = $res_wx['openid'];
@@ -122,9 +122,9 @@ class Index extends Controller
         }
         $res_wx = send_url(['code'=>$code]);
         $res_wx = json_decode($res_wx,true);
-        if($res_wx['errcode']){
+        /*if(isset($res_wx['errcode'])){
             return failMsg('code失效');
-        }
+        }*/
         $post_data['open_id_dt'] = $res_wx['openid'];
         $post_data['union_id'] = $res_wx['unionid'];
         //$post_data['open_id_dt'] = input('openid');
