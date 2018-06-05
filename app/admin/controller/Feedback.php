@@ -33,11 +33,31 @@ class Feedback  extends Permissions
             $where['create_time'] = [['>=',$min_time],['<=',$max_time]];
         }
 
-        $user = $model->where($where)->select();
+        $user = $model->field('me_feedback.id,me_feedback.create_time,me_feedback.content,me_feedback.operate_dt,me_feedback.status,me_user.name')
+            ->join('me_user','me_user.code = me_feedback.user_code')
+            ->where($where)->select();
 
         $this->assign('feed',$user);
         return $this->fetch();
 
+    }
+
+    /**
+     * 标记为已处理
+     */
+    public function done(){
+        if($this->request->isAjax()) {
+            $id = $this->request->has('id') ? $this->request->param('id', 0, 'intval') : 0;
+            $model = new feedbackModel();
+            $data['status'] = 'D';
+            $data['operate_dt'] = date("Y-m-d H:i:s");
+            $r = $model ->save($data,['id'=>$id]);
+            if(false == $r) {
+                return $this->error('处理失败');
+            } else {
+                return $this->success('处理成功','admin/feedback/index');
+            }
+        }
     }
 
 }

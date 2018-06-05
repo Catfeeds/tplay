@@ -13,5 +13,10 @@ use think\Model;
 
 class User extends Model
 {
+    public function feedback()
+    {
+        //关联反馈表
+        return $this->hasOne('Feedback');
+    }
 
 }

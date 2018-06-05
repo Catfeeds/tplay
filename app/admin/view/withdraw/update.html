@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>玛恩医生</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="__PUBLIC__/layui/css/layui.css"  media="all">
+    <link rel="stylesheet" href="__PUBLIC__/font-awesome/css/font-awesome.min.css" media="all" />
+    <link rel="stylesheet" href="__CSS__/admin.css"  media="all">
+</head>
+<body style="padding:10px;">
+<div class="tplay-body-div">
+    <div style="margin-top: 20px;">
+    </div>
+    <form class="layui-form" id="withdraw">
+        <div class="layui-form-item">
+            <label class="layui-form-label">医生编号</label>
+            <div class="layui-input-inline">
+                <input name="doctor_code" readonly lay-verify="doctor_code"  class="layui-input" type="text" value="{$vo.doctor_code}">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓名</label>
+            <div class="layui-input-inline">
+                <input name="name" readonly lay-verify="name"  class="layui-input" type="text" value="{$vo.name}">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">开户行</label>
+            <div class="layui-input-inline">
+                <input name="opening_bank" readonly lay-verify="opening_bank" autocomplete="off" class="layui-input" type="text" value="{$vo.opening_bank}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">卡号</label>
+            <div class="layui-input-inline">
+                <div class="layui-input-inline">
+                    <input name="card_no" readonly lay-verify="card_no" autocomplete="off" class="layui-input" type="text" value="{$vo.card_no}">
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">金额</label>
+            <div class="layui-input-inline">
+                <input name="amount" readonly lay-verify="amount" autocomplete="off" class="layui-input" type="text" value="{$vo.amount}">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">申请时间</label>
+            <div class="layui-input-inline">
+                <input name="create_time"  readonly lay-verify="create_time" autocomplete="off" class="layui-input" type="text" value="{$vo.create_time}">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block" style="max-width: 600px">
+                <textarea placeholder="请输入内容" class="layui-textarea" name="remark">{$vo.remark}</textarea>
+            </div>
+        </div>
+
+
+        <input type="hidden" name="id" value="{$id}">
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="withdraw">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+
+    </form>
+
+
+    <script src="__PUBLIC__/layui/layui.js"></script>
+    <script src="__PUBLIC__/jquery/jquery.min.js"></script>
+    <script>
+        var message;
+        layui.config({
+            base: '__JS__/',
+            version: '1.0.1'
+        }).use(['app', 'message'], function() {
+            var app = layui.app,
+                $ = layui.jquery,
+                layer = layui.layer;
+            //将message设置为全局以便子页面调用
+            message = layui.message;
+            //主入口
+            app.set({
+                type: 'iframe'
+            }).init();
+        });
+    </script>
+    <script>
+        layui.use(['layer', 'form'], function() {
+            var layer = layui.layer,
+                $ = layui.jquery,
+                form = layui.form;
+            $(window).on('load', function() {
+                form.on('submit(withdraw)', function(data) {
+                    $.ajax({
+                        url:"{:url('admin/withdraw/update')}",
+                        data:$('#customer').serialize(),
+                        type:'post',
+                        async: false,
+                        success:function(res) {
+                            if(res.code == 1) {
+                                layer.alert(res.msg, function(index){
+                                    location.href = res.url;
+                                })
+                            } else {
+                                layer.msg(res.msg);
+                            }
+                        }
+                    })
+                    return false;
+                });
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

@@ -44,4 +44,30 @@ class Withdraw extends Permissions
 
     }
 
+    /**
+     * 标记为已处理
+     */
+    public function update(){
+        $id = $this->request->has('id') ? $this->request->param('id', 0, 'intval') : 0;
+        $model = new withdrawModel();
+        if($this->request->post()) {
+            $data['status'] = 'D';
+            $data['operate_dt'] = date("Y-m-d H:i:s");
+
+            $r = $model ->save($data,['id'=>$id]);
+            if(false == $r) {
+                return $this->error('处理失败');
+            } else {
+                return $this->success('处理成功','admin/withdraw/index');
+            }
+        }else{
+
+            $withdraw = $model ->find($id);
+            $this->assign('vo',$withdraw);
+            $this->assign('id',$id);
+            return $this->fetch();
+        }
+    }
+
+
 }

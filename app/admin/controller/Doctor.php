@@ -28,9 +28,12 @@ class Doctor extends Permissions
         //实例化医生模型
         $model = new doctorModel();
         $where = ['status'=>'A'];
+
         $post = $this->request->param();
         if (isset($post['keywords']) and !empty($post['keywords'])) {
             $where['name'] = ['like', '%' . $post['keywords'] . '%'];
+            $map['phone'] = ['like', '%' . $post['keywords'] . '%'];
+
         }
 
         if(isset($post['create_time']) and !empty($post['create_time'])) {
@@ -62,7 +65,7 @@ class Doctor extends Permissions
                 ['name', 'require', '姓名不能为空'],
                 ['tag', 'require', '标签不能为空'],
                 ['info', 'require', '个人简介不能为空'],
-                ['phone', 'require', '手机号不能为空'],
+                ['phone', 'require|max:11|/^1[3-8]{1}[0-9]{9}$/', '手机号不能为空手机号码最多不能超过11个字符|手机号码格式不正确'],
                 ['original_price', 'require', '原价格不能为空'],
                 ['hospital_code', 'require', '请选择所属医院'],
                 ['title', 'require', '请选择所属职位'],
@@ -120,7 +123,7 @@ class Doctor extends Permissions
                 ['name', 'require', '姓名不能为空'],
                 ['tag', 'require', '标签不能为空'],
                 ['info', 'require', '个人简介不能为空'],
-                ['phone', 'require', '手机号不能为空'],
+                ['phone', 'require|max:11|/^1[3-8]{1}[0-9]{9}$/', '手机号不能为空手机号码最多不能超过11个字符|手机号码格式不正确'],
                 ['original_price', 'require', '原价格不能为空'],
                 ['hospital_code', 'require', '请选择所属医院'],
                 ['title', 'require', '请选择所属职位'],

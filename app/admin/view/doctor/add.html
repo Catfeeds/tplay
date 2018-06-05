@@ -76,7 +76,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label">从业年限</label>
             <div class="layui-input-block" style="max-width:600px;">
-                <input class="layui-input" name="job_period" type="number" value="1">
+                <input class="layui-input" name="job_period" type="number" value="1" min="0">
             </div>
         </div>
 
@@ -219,6 +219,35 @@
                     //请求异常回调
                     //演示失败状态，并实现重传
                     var demoText = $('#demoText');
+                    demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+                    demoText.find('.demo-reload').on('click', function(){
+                        uploadInst.upload();
+                    });
+                }
+            });
+        });
+    </script>
+    <script>
+        layui.use('upload', function(){
+            var upload = layui.upload;
+            //执行实例
+            var uploadInst = upload.render({
+                elem: '#gzh' //绑定元素
+                ,url: "{:url('common/upload')}" //上传接口
+                ,data:{use:'doctor_gzh'}
+                ,done: function(res){
+                    //上传完毕回调
+                    if(res.code == 2) {
+                        $('#demo2').attr('src',res.src);
+                        $('#upload-gzh').append('<input type="hidden" name="gzh_qr_path" value="'+ res.id +'">');
+                    } else {
+                        layer.msg(res.msg);
+                    }
+                }
+                ,error: function(){
+                    //请求异常回调
+                    //演示失败状态，并实现重传
+                    var demoText = $('#demoText2');
                     demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
                     demoText.find('.demo-reload').on('click', function(){
                         uploadInst.upload();

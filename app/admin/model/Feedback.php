@@ -13,5 +13,10 @@ use think\Model;
 
 class Feedback extends  Model
 {
+    public function user()
+    {
+        //关联用户表
+        return $this->belongsTo('User');
+    }
 
 }

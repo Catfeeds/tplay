@@ -34,7 +34,12 @@ class Inquisition extends Permissions
             $where['create_time'] = [['>=',$min_time],['<=',$max_time]];
         }
 
-        $inquisition = $model->where($where)->order('create_time desc')->paginate(20);;
+        $inquisition = $model->field('me_visit.id,me_visit.status,me_visit.origianl_price,me_visit.actual_pay,me_visit.create_time,me_visit.inquiry_dt,me_visit.reply_dt,me_user.name,me_doctor.name as doctor_name')
+            ->join('me_user','me_user.code = me_visit.user_code')
+            ->join('me_doctor','me_doctor.code = me_visit.doctor_code')
+            ->where($where)
+            ->order('create_time desc')
+            ->paginate(20);;
 
         $this->assign('inquisition',$inquisition);
         return $this->fetch();

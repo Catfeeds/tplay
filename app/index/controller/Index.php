@@ -66,7 +66,8 @@ class Index extends Controller
 
             ],
             [
-                'name.require'  =>  '用户名必须'
+                'name.require'  =>  '用户名必须',
+                'open_id_ur.require'=>'openid不能为空'
 
             ]
         );

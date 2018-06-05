@@ -59,6 +59,7 @@ class Article extends Permissions
         foreach ($articles as $key => $value) {
             $articles[$key]['edit_admin'] = Db::name('admin')->where('id',$value['edit_admin_id'])->value('nickname');
         }
+
         $this->assign('articles',$articles);
         $info['cate'] = Db::name('article_cate')->select();
         $info['admin'] = Db::name('admin')->select();

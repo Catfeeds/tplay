@@ -61,17 +61,19 @@
             <col width="200">
             <col width="200">
             <col width="200">
+            <col width="200">
         </colgroup>
         <thead>
         <tr>
             <th>ID</th>
-            <th>头像</th>
             <th>姓名</th>
             <th>性别</th>
-            <th>昵称</th>
-            <th>创建时间</th>
-            <th>地址</th>
             <th>手机</th>
+            <th>身高</th>
+            <th>体重</th>
+            <th>年龄</th>
+            <th>有无过敏史</th>
+            <th>创建时间</th>
             <th>操作</th>
         </tr>
         </thead>
@@ -79,23 +81,21 @@
         {volist name="user" id="vo"}
         <tr>
             <td>{$vo.id}</td>
-            <td><a href="{$vo.wx_head_img_url}" class="tooltip"><img src="{$vo.wx_head_img_url}" width="20" height="20"></a></td>
             <td>{$vo.name}</td>
             <td>
-                {if condition="$vo.wx_sex eq 1 "} 女
+                {if condition="$vo.sex eq 1 "} 女
                 {else /} 男
                 {/if}
             </td>
-            <td>{$vo.wx_nick_name}</td>
+            <td>{$vo.phone}</td>
+            <td>{$vo.height}</td>
+            <td>{$vo.weight}</td>
+            <td>{$vo.age}</td>
+            <td>{$vo.is_allergy}</td>
             <td>{$vo.create_time}</td>
-            <td>{$vo.wx_country}-{$vo.wx_province}-{$vo.wx_city}</td>
-            <td>
-               {$vo.phone}
-            </td>
             <td class="operation-menu">
                 <div class="layui-btn-group">
-                    <a href="{:url('customer/update',['id'=>$vo.id])}" class="layui-btn layui-btn-xs a_menu layui-btn-primary" id="{$vo.id}" style="margin-right: 0;font-size:12px;">修改</a>
-                    <a href="{:url('customer/detail',['id'=>$vo.id])}" class="layui-btn layui-btn-xs a_menu layui-btn-primary" id="{$vo.id}" style="margin-right: 0;font-size:12px;">问诊信息</a>
+                    <a href="{:url('customer/userdetail',['id'=>$vo.id,'uid'=>$id])}" class="layui-btn layui-btn-xs a_menu layui-btn-primary" id="{$vo.id}" style="margin-right: 0;font-size:12px;">详情</a>
                     <a class="layui-btn layui-btn-xs layui-btn-primary delete" id="{$vo.id}" style="margin-right: 0;font-size:12px;">删除</a>
                 </div>
             </td>
@@ -103,7 +103,7 @@
         {/volist}
         </tbody>
     </table>
-    <div style="padding:0 20px;">{$user->render()}</div>
+    <div style="padding:0 20px;"></div>
 
     {include file="public/foot"}
 
@@ -113,7 +113,7 @@
             var id = $(this).attr('id');
             layer.confirm('确定要删除?', function(index) {
                 $.ajax({
-                    url:"{:url('admin/customer/delete')}",
+                    url:"{:url('admin/customer/userdelete')}",
                     data:{id:id},
                     success:function(res) {
                         layer.msg(res.msg);

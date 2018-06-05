@@ -9,6 +9,7 @@
 
 namespace app\admin\controller;
 
+use app\admin\model\UserPatient;
 use \think\Db;
 use app\admin\controller\Permissions;
 use \think\Cookie;
@@ -93,5 +94,66 @@ class Customer extends Permissions
             }
         }
     }
+
+    /**
+     * 问诊信息
+     */
+    public function detail(){
+        $id = $this->request->has('id') ? $this->request->param('id', 0, 'intval') : 0;
+        $model = new UserPatient();
+        $where['user_id'] = $id;
+        $where['status'] = 'A';//正常
+        $user = $model->where($where)->select();
+        $this->assign('id',$id);
+        $this->assign('user',$user);
+        return $this->fetch();
+    }
+
+    /**
+     * 问诊详情
+     */
+    public function userDetail(){
+        $id = $this->request->has('id') ? $this->request->param('id', 0, 'intval') : 0;
+        $uid = $this->request->param('uid', 0, 'intval') ;
+        if($this->request->isPost()) {
+            $post = $this->request->post();
+
+            $user = new UserPatient();
+
+            if(false == $user->save($post,['id'=>$id])) {
+                return $this->error('修改失败');
+            } else {
+
+                return $this->success('修改成功',"admin/customer/index");
+            }
+
+
+        }
+        else {
+            $user = new UserPatient();
+            $vo = $user->find($id)->toArray();
+            $this->assign('vo',$vo);
+            $this->assign('id',$id);
+            return $this->fetch();
+        }
+
+    }
+    /**
+     * 问诊信息删除
+     */
+    public function userDelete(){
+        if($this->request->isAjax()) {
+            $id = $this->request->has('id') ? $this->request->param('id', 0, 'intval') : 0;
+            $model = new UserPatient();
+            $data['status'] = 'D';
+            $r = $model ->save($data,['id'=>$id]);
+            if(false == $r) {
+                return $this->error('删除失败');
+            } else {
+                return $this->success('删除成功','admin/customer/index');
+            }
+        }
+    }
+
 
 }
