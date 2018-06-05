@@ -78,7 +78,7 @@ class Doctor extends Permissions
                 $this->error('提交失败：' . $validate->getError());
             }
             //验证医生编号是否存在
-            $name = $model->where(['code'=>$post['code'],'id'=>['neq',$post['id']]])->select();
+            $name = $model->where(['code'=>$post['code']])->select();
             if(!empty($name)) {
                 return $this->error('提交失败：该医生编号已经存在');
             }
