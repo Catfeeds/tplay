@@ -30,7 +30,7 @@ class Doctor extends Controller
         $pagesize = input('pagesize','5');
 
 
-        $doctor =  $model->field('id,name,head_img,title,hospital_code,department_code,original_price')->limit(($page-1)*$pagesize,$pagesize)->order('create_time desc') ->select();
+        $doctor =  $model->field('id,name,head_img,title,hospital_code,department_code,original_price,tag')->limit(($page-1)*$pagesize,$pagesize)->order('create_time desc') ->select();
 
         if($doctor){
             foreach ($doctor as $k=>$v){
