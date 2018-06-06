@@ -126,7 +126,7 @@ class Doctor extends Controller
             return failLogin("您还未登录");
         }
 
-        $data['user_code'] = Session::get('user_code');
+        $data['user_code'] = $_SERVER['HTTP_CODE'];
         $data['doctor_code'] = input('doctor_code');
         $data['origianl_price'] = input('origianl_price');
         $data['actual_pay'] = input('actual_pay');

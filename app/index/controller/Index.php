@@ -203,7 +203,7 @@ class Index extends Controller
             return failMsg('您还不是本平台医生，请先联系平台管理员,微信号minebuty');
         }
 
-        $post_data['doctor_code'] = $res ['code'];
+        $post_data['code'] = $res ['code'];
         Session::set('doctor_code',$res ['code']);
         Session::set('openid',$post_data['open_id_dt']);
 

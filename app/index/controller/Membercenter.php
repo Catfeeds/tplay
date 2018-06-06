@@ -25,7 +25,7 @@ class Membercenter extends Controller
      */
     public function index()
     {
-        $user_id = Session::get('user_id');
+        $user_id = $_SERVER['HTTP_USER_ID'];
         //检查是否已登录
         if(!$user_id){
             return failLogin("您还未登录");
@@ -49,7 +49,7 @@ class Membercenter extends Controller
      */
     public function inquisition()
     {
-        $user_id = Session::get('user_id');
+        $user_id = $_SERVER['HTTP_USER_ID'];
         //检查是否已登录
         if(!$user_id){
             return failLogin("您还未登录");
@@ -92,7 +92,7 @@ class Membercenter extends Controller
      */
     public function inquisitionDetail()
     {
-        $user_id = Session::get('user_id');
+        $user_id = $_SERVER['HTTP_USER_ID'];
         //检查是否已登录
         if(!$user_id){
             return failLogin("您还未登录");
@@ -119,7 +119,7 @@ class Membercenter extends Controller
             return failMsg($result);
         }
 
-        $where['user_code'] = Session::get('user_code');
+        $where['user_code'] = $_SERVER['HTTP_CODE'];
 
         $model = new VisitLine();
         $res = $model->where($where)->select();
@@ -135,13 +135,13 @@ class Membercenter extends Controller
      * 关注医生
      */
     public function collect(){
-        $user_id = Session::get('user_id');
+        $user_id = $_SERVER['HTTP_USER_ID'];
         //检查是否已登录
         if(!$user_id){
             return failLogin("您还未登录");
         }
 
-        $data['user_code'] = Session::get('user_code');
+        $data['user_code'] = $_SERVER['HTTP_CODE'];
         $data['follow_code'] = input('doctor_code');
         //验证字段
         $result = $this->validate(
@@ -185,13 +185,13 @@ class Membercenter extends Controller
      */
     public function collection()
     {
-        /*$user_id = Session::get('user_id');
+        $user_id = $_SERVER['HTTP_USER_ID'];
         //检查是否已登录
         if(!$user_id){
             return failLogin("您还未登录");
-        }*/
+        }
 
-        $where['user_code'] = Session::get('user_code');
+        $where['user_code'] = $_SERVER['HTTP_CODE'];
         $model = new favoriteModel();
 
         $res = $model->field('me_doctor.id,name,head_img,title,hospital_code,department_code,original_price')->join('me_doctor','me_doctor.code=me_favorite.follow_code')->where($where)->select();
@@ -208,13 +208,11 @@ class Membercenter extends Controller
      */
     public function feedback()
     {
-        /*$user_id = Session::get('user_id');
+        $user_id = $_SERVER['HTTP_USER_ID'];
         //检查是否已登录
         if(!$user_id){
             return failLogin("您还未登录");
-        }*/
-
-        //$data['user_id'] = $_SERVER['HTTP_USER_ID'];
+        }
 
         //$data['user_code'] = Session::get('user_code');
         $data['user_code'] = $_SERVER['HTTP_CODE'];
@@ -255,7 +253,7 @@ class Membercenter extends Controller
     public function detail()
     {
 
-        $user_id = Session::get('user_id');
+        $user_id = $_SERVER['HTTP_USER_ID'];
         //检查是否已登录
         if(!$user_id){
             return failLogin("您还未登录");
@@ -278,7 +276,7 @@ class Membercenter extends Controller
      */
     public function editDetail(){
 
-        $user_id = Session::get('user_id');
+        $user_id = $_SERVER['HTTP_USER_ID'];
         //检查是否已登录
 
         if(!$user_id){

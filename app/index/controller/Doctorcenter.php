@@ -31,13 +31,13 @@ class Doctorcenter extends Controller
      */
     public function index()
     {
-        $user_id = Session::get('user_id');
+        $user_id = $_SERVER['HTTP_USER_ID'];
         //检查是否已登录
         if(!$user_id){
             return failLogin("您还未登录");
         }
 
-        $where['code']  = Session::get('doctor_code');
+        $where['code']  = $_SERVER['HTTP_CODE'];
 
 
         $model = new doctorModel;
@@ -82,7 +82,7 @@ class Doctorcenter extends Controller
     {
 
         //检查是否已登录
-        $doctor_code = Session::get('doctor_code');
+        $doctor_code = $_SERVER['HTTP_CODE'];
         if(!$doctor_code){
             return failLogin("您还未登录");
         }
@@ -132,7 +132,7 @@ class Doctorcenter extends Controller
      */
     public function questionDetail(){
         //检查是否已登录
-        $doctor_code = Session::get('doctor_code');
+        $doctor_code = $_SERVER['HTTP_CODE'];
         if(!$doctor_code){
             return failLogin("您还未登录");
         }
@@ -196,7 +196,7 @@ class Doctorcenter extends Controller
      */
     public function questionDetailList(){
         //检查是否已登录
-        $doctor_code = Session::get('doctor_code');
+        $doctor_code = $_SERVER['HTTP_CODE'];
         if(!$doctor_code){
             return failLogin("您还未登录");
         }
@@ -246,7 +246,7 @@ class Doctorcenter extends Controller
      */
     public function answer(){
         //检查是否已登录
-        $doctor_code = Session::get('doctor_code');
+        $doctor_code = $_SERVER['HTTP_CODE'];
         if(!$doctor_code){
             return failLogin("您还未登录");
         }
@@ -277,7 +277,7 @@ class Doctorcenter extends Controller
     public function income()
     {
         //获取余额
-        $doctor_code = Session::get('doctor_code');
+        $doctor_code = $_SERVER['HTTP_CODE'];
         //检查是否已登录
 
         if(!$doctor_code){
@@ -301,7 +301,7 @@ class Doctorcenter extends Controller
      */
     public function incomeList()
     {
-        $doctor_code = Session::get('doctor_code');
+        $doctor_code = $_SERVER['HTTP_CODE'];
         //检查是否已登录
 
         if(!$doctor_code){
@@ -325,15 +325,19 @@ class Doctorcenter extends Controller
      */
     public function withdraw()
     {
-        $doctor_code = Session::get('doctor_code');
+        $doctor_code = $_SERVER['HTTP_CODE'];
         //检查是否已登录
 
         if(!$doctor_code){
             return failLogin("您还未登录");
         }
+        //查看该用户是否存在
+        $user = new User();
+        $user_id = $_SERVER['HTTP_USER_ID'];
 
+        $u = $user->field('open_id_dt')->find($user_id);
         $model = new paymentLineModel();
-        $data['open_id'] = Session::get('openid');
+        $data['open_id'] = $u['open_id_dt'];
         $data['doctor_code'] = $doctor_code;
         $data['name'] = input('name');//姓名
         $data['card_no'] = input('card_no');
