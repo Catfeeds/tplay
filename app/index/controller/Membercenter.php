@@ -214,7 +214,7 @@ class Membercenter extends Controller
             return failLogin("您还未登录");
         }*/
 
-        $data['user_id'] = $_SERVER['HTTP_USER_ID'];
+        //$data['user_id'] = $_SERVER['HTTP_USER_ID'];
 
         //$data['user_code'] = Session::get('user_code');
         $data['user_code'] = $_SERVER['HTTP_CODE'];
