@@ -185,11 +185,11 @@ class Membercenter extends Controller
      */
     public function collection()
     {
-        $user_id = Session::get('user_id');
+        /*$user_id = Session::get('user_id');
         //检查是否已登录
         if(!$user_id){
             return failLogin("您还未登录");
-        }
+        }*/
 
         $where['user_code'] = Session::get('user_code');
         $model = new favoriteModel();
@@ -208,11 +208,11 @@ class Membercenter extends Controller
      */
     public function feedback()
     {
-        $user_id = Session::get('user_id');
+        /*$user_id = Session::get('user_id');
         //检查是否已登录
         if(!$user_id){
             return failLogin("您还未登录");
-        }
+        }*/
 
         $data['user_code'] = Session::get('user_code');
 
