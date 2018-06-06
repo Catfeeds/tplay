@@ -27,12 +27,12 @@ class Index extends Controller
         }
         $res_wx = send_url(['code'=>$code]);
         $res_wx = json_decode($res_wx,true);
-        if($res_wx['errcode']){
+       if(isset($res_wx['errcode'])){
             return failMsg('code失效');
         }
         $post_data['open_id_ur'] = $res_wx['openid'];
-        $post_data['union_id'] = $res_wx['unionid'];
-
+        $post_data['union_id'] = $res_wx['session_key'];
+        //$post_data['open_id_ur'] = input('openid');
 
         $post_data['name']  = input('name');
         $post_data['wx_nick_name'] = input('nick_name');
@@ -48,9 +48,9 @@ class Index extends Controller
                 'nick_name' => $post_data['wx_nick_name'],
                 'head_img'   => $post_data['wx_head_img_url'],
                 'sex'   => $post_data['wx_sex'],
-                'country'   => $post_data['wx_country'],
-                'city'   => $post_data['wx_city'],
-                'province'   => $post_data['wx_province'],
+                //'country'   => $post_data['wx_country'],
+                //'city'   => $post_data['wx_city'],
+                //'province'   => $post_data['wx_province'],
                 'open_id_ur' => $post_data['open_id_ur']
             ],
             [
@@ -58,9 +58,9 @@ class Index extends Controller
                 'nick_name'   => 'require',
                 'head_img'   => 'require',
                 'sex'   => 'require',
-                'country'   => 'require',
-                'city'   => 'require',
-                'province'   => 'require',
+                //'country'   => 'require',
+                //'city'   => 'require',
+                //'province'   => 'require',
                 'open_id_ur' =>'require'
 
 
@@ -122,11 +122,11 @@ class Index extends Controller
         }
         $res_wx = send_url(['code'=>$code]);
         $res_wx = json_decode($res_wx,true);
-        if($res_wx['errcode']){
+        /*if(isset($res_wx['errcode'])){
             return failMsg('code失效');
-        }
+        }*/
         $post_data['open_id_dt'] = $res_wx['openid'];
-        $post_data['union_id'] = $res_wx['unionid'];
+        $post_data['union_id'] = $res_wx['session_key'];
         //$post_data['open_id_dt'] = input('openid');
 
         $post_data['name']  = input('name');

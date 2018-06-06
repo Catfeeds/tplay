@@ -33,11 +33,10 @@
         <div class="layui-form-item">
             <label class="layui-form-label">性别</label>
             <div class="layui-input-inline">
-                <div class="layui-input" >
-                {if condition="$vo.wx_sex eq 1 "} 女
+                <input type="text" class="layui-input"  readonly value="{if condition="$vo.wx_sex eq 1 "} 女
                 {else /} 男
                 {/if}
-                </div>
+                " />
             </div>
         </div>
 
