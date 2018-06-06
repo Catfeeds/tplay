@@ -85,6 +85,9 @@ class Doctor extends Controller
                 $doctor[$k]['head_img'] = geturl($v['head_img']);
                 $doctor[$k]['head_img'] = str_replace("\\","/",$doctor[$k]['head_img']);
             }
+            //查询跟该医生相关的最新一个提问
+
+
             return success($doctor);
         }else{
             return emptyResult();
