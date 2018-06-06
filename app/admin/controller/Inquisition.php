@@ -47,4 +47,22 @@ class Inquisition extends Permissions
 
     }
 
+    /**
+     * 问诊详情
+     */
+
+    public function detail(){
+
+    }
+
+
+    /**
+     * 超时问题 医生模拟回答
+     */
+
+    public function reply(){
+
+
+    }
+
 }

@@ -60,6 +60,8 @@
             <col width="200">
             <col width="200">
             <col width="100">
+            <col width="100">
+            <col width="100">
         </colgroup>
         <thead>
         <tr>
@@ -70,6 +72,7 @@
             <th>卡号</th>
             <th>金额</th>
             <th>申请时间</th>
+            <th>处理时间</th>
             <th>状态</th>
             <th>备注</th>
             <th>操作</th>
@@ -85,6 +88,7 @@
             <td>{$vo.card_no}</td>
             <td>{$vo.amount}</td>
             <td>{$vo.create_time}</td>
+            <td>{$vo.operate_dt}</td>
             <td>
                 {if condition="$vo.status eq 'P' "} 待处理
                 {else /} 已处理

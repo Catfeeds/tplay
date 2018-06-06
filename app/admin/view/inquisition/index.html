@@ -98,8 +98,8 @@
 
             <td class="operation-menu">
                 <div class="layui-btn-group">
-                    <a href="{:url('inquisition/update',['id'=>$vo.id])}" class="layui-btn layui-btn-xs a_menu layui-btn-primary" id="{$vo.id}" style="margin-right: 0;font-size:12px;">详情</a>
-                    <a class="layui-btn layui-btn-xs layui-btn-primary" id="{$vo.id}" style="margin-right: 0;font-size:12px;"></a>
+                    <a href="{:url('inquisition/detail',['id'=>$vo.id])}" class="layui-btn layui-btn-xs a_menu layui-btn-primary" id="{$vo.id}" style="margin-right: 0;font-size:12px;">详情</a>
+                    <a href=""  class="layui-btn layui-btn-xs layui-btn-primary" id="{$vo.id}" style="margin-right: 0;font-size:12px;">模拟回答</a>
                 </div>
             </td>
         </tr>
@@ -110,26 +110,6 @@
 
     {include file="public/foot"}
 
-    <script type="text/javascript">
-
-        $('.delete').click(function(){
-            var id = $(this).attr('id');
-            layer.confirm('确定要删除?', function(index) {
-                $.ajax({
-                    url:"{:url('admin/inquisition/delete')}",
-                    data:{id:id},
-                    success:function(res) {
-                        layer.msg(res.msg);
-                        if(res.code == 1) {
-                            setTimeout(function(){
-                                location.href = res.url;
-                            },1500)
-                        }
-                    }
-                })
-            })
-        })
-    </script>
 </div>
 </body>
 </html>
