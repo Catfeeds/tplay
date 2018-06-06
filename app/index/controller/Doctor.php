@@ -30,12 +30,21 @@ class Doctor extends Controller
         $pagesize = input('pagesize','5');
 
 
-        $doctor =  $model->field('id,name,head_img,title,hospital_code,department_code,original_price,tag')->limit(($page-1)*$pagesize,$pagesize)->order('create_time desc') ->select();
+        $doctor =  $model->field('id,code,name,head_img,title,hospital_code,department_code,original_price,tag')->limit(($page-1)*$pagesize,$pagesize)->order('create_time desc') ->select();
+
 
         if($doctor){
             foreach ($doctor as $k=>$v){
                 $doctor[$k]['head_img'] = geturl($v['head_img']);
                 $doctor[$k]['head_img'] = str_replace("\\","/",$doctor[$k]['head_img']);
+                //平均响应多少分钟
+                $doctor[$k]['minute'] = '15';
+
+                //总计多少个回答
+                $visit = new Visit();
+                $ww['doctor_code']= $v['code'];
+                $doctor[$k]['count']=$visit->where($ww)->count();
+
             }
 
             return success($doctor);
@@ -245,8 +254,37 @@ class Doctor extends Controller
      * 查看某个问题的详情
      */
     public function questionDetail(){
+        //问题id
+        $id = input('id');
+        //验证字段
+        $result = $this->validate(
+            [
+                'id'  => input('id'),
+            ],
+            [
+                'id'  => 'require',
 
+            ],
+            [
+                'id.require'  =>  '问题id必须'
 
+            ]
+        );
+
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
+
+        $where['visit_id'] = $id;
+        $visit = new VisitLine();
+        $res = $visit->where($where)->order('create_time')->select();
+
+        if($res){
+            return success($res);
+        }else{
+            return emptyResult();
+        }
     }
 
 }

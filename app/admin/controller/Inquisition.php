@@ -25,7 +25,7 @@ class Inquisition extends Permissions
         $where = [];
         $post = $this->request->param();
         if (isset($post['keywords']) and !empty($post['keywords'])) {
-            $where['name'] = ['like', '%' . $post['keywords'] . '%'];
+            $where['me_doctor.name'] = ['like', '%' . $post['keywords'] . '%'];
         }
 
         if(isset($post['create_time']) and !empty($post['create_time'])) {

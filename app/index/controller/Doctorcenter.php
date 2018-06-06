@@ -9,12 +9,16 @@
 
 namespace app\index\controller;
 
+use app\index\model\User;
+use app\index\model\UserPatient;
+use app\index\model\Visit;
 use think\Config;
 use \think\Db;
 use think\Request;
 use \think\Controller;
 use \think\Response\json;
 use app\index\model\Visit as visitModel;//问诊模型
+use app\index\model\VisitLine;//问诊详情
 use think\Session;
 use app\index\model\WxPaymentLine as paymentLineModel;//付款队列
 use app\index\model\Account as accountModel;//账户模型
@@ -82,10 +86,11 @@ class Doctorcenter extends Controller
         if(!$doctor_code){
             return failLogin("您还未登录");
         }
+        $doctor_code ='0004';
 
 
         $model = new visitModel();
-        $where['status'] = input('status');
+        $where['me_visit.status'] = input('status');
         $where['doctor_code'] = $doctor_code;
         //验证字段
         $result = $this->validate(
@@ -106,7 +111,12 @@ class Doctorcenter extends Controller
             // 验证失败 输出错误信息
             return failMsg($result);
         }
-        $res = $model->where($where)->order('create_time desc')->select();
+        $res = $model->field('me_visit.*,me_user.id as user_id,me_user_patient.name,me_user_patient.phone,me_user_patient.age')
+            ->join('me_user','me_user.code = me_visit.user_code')
+            ->join('me_user_patient','me_user.id = me_user_patient.user_id')
+            ->where($where)
+            ->order('create_time desc')
+            ->select();
 
         if ($res) {
             return success($res);
@@ -121,14 +131,143 @@ class Doctorcenter extends Controller
      * 查看某个问题的详情
      */
     public function questionDetail(){
+        //检查是否已登录
+        $doctor_code = Session::get('doctor_code');
+        if(!$doctor_code){
+            return failLogin("您还未登录");
+        }
+
+        //判断是否有权限操作
+
+
+        $id = input('id');
+        $user_code = input('user_code');
+
+        //验证字段
+        $result = $this->validate(
+            [
+                'id'  => input('id'),
+            ],
+            [
+                'id'  => 'require',
+
+            ],
+            [
+                'id.require'  =>  '问题id必须'
+
+            ]
+        );
+
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
+        //及查看问诊人信息
+        $user = new User();
+        $res1 = $user->field('me_user_patient.*,me_user.id')
+            ->join('me_user_patient','me_user.id=me_user_patient.user_id')
+            ->where(['code'=>$user_code])->select();
+
+        //查看最新一条问题内容
+        $where['visit_id'] = $id;
+        $visit = new VisitLine();
+        $res = $visit->where($where)->order('create_time desc')->limit(0,1)->select();
+        $data['user'] = $res1;
+        $data['list'] = $res;
+        //查看问题附件
+        $data['pics'] ='';
+        //查看状态和支付金额
+        $v = new Visit();
+        $data['other'] = $v->field('status,origianl_price,actual_pay')->find($id);
+
+        if($res){
+            return success($data);
+        }else{
+            return emptyResult();
+        }
+
+
 
 
     }
 
     /**
+     * 查看某个问题的详情列表
+     */
+    public function questionDetailList(){
+        //检查是否已登录
+        $doctor_code = Session::get('doctor_code');
+        if(!$doctor_code){
+            return failLogin("您还未登录");
+        }
+        //判断是否有权限操作
+
+        $id = input('id');
+
+        //验证字段
+        $result = $this->validate(
+            [
+                'id'  => input('id'),
+            ],
+            [
+                'id'  => 'require',
+
+            ],
+            [
+                'id.require'  =>  '问题id必须'
+
+            ]
+        );
+
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
+
+        $where['visit_id'] = $id;
+        $visit = new VisitLine();
+        $res = $visit->where($where)->order('create_time')->select();
+
+        if($res){
+            return success($res);
+        }else{
+            return emptyResult();
+        }
+
+
+
+
+    }
+
+
+
+    /**
      * 回复问题
      */
     public function answer(){
+        //检查是否已登录
+        $doctor_code = Session::get('doctor_code');
+        if(!$doctor_code){
+            return failLogin("您还未登录");
+        }
+        //判断是否有权限操作
+
+
+        //问诊id  visit_id
+        $id = input('visit_id');
+        $model = new VisitLine();
+        $data['content'] = input('content');
+        $data['doctor_code'] = $doctor_code;
+        $data['visit_id'] = $id;
+
+        $re = $model->save($data);
+        if ($re){
+            return success();
+        }else{
+            return failMsg('操作失败');
+        }
+
+
 
     }
 

@@ -9,6 +9,8 @@
 
 namespace app\admin\controller;
 
+use app\admin\model\Account;
+use app\admin\model\Visit;
 use \think\Db;
 use app\admin\controller\Permissions;
 use \think\Cookie;
@@ -42,7 +44,22 @@ class Doctor extends Permissions
             $where['create_time'] = [['>=',$min_time],['<=',$max_time]];
         }
 
-        $doctor = $model->where($where)->order('create_time desc')->paginate(20);;
+        $doctor = $model->where($where)->order('create_time desc')->paginate(20);
+
+        foreach ($doctor as $k=>$v){
+            //查询该医生的总收入SELECT SUM(AMOUNT) WHERE TYPE='DT' AND CODE=USER_CODE
+            $account = new Account();
+            $w['type'] = 'DT';
+            $w['code'] = $v['code'];
+            $doctor[$k]['amount']=$account->where($w)->sum('amount');
+            //查询该医生的问诊量
+            $visit = new Visit();
+            $ww['doctor_code']= $v['code'];
+            $doctor[$k]['count']=$visit->where($ww)->count();
+
+        }
+
+
 
         $this->assign('doctor',$doctor);
         return $this->fetch();

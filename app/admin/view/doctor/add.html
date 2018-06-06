@@ -47,8 +47,8 @@
 
         <div class="layui-form-item layui-form-text">
             <label class="layui-form-label">个人简介</label>
-            <div class="layui-input-block" style="max-width:1000px;">
-                <textarea placeholder="请输入简介" class="layui-textarea" name="info" id="container" style="border:0;padding:0">{notempty name="$doctor.info"}{$doctor.info}{/notempty}</textarea>
+            <div class="layui-input-block" style="max-width:600px;">
+                <textarea placeholder="请输入内容" class="layui-textarea" name="info">{notempty name="$doctor.info"}{$doctor.info}{/notempty}</textarea>
             </div>
         </div>
 
@@ -282,19 +282,6 @@
                 });
             });
         });
-    </script>
-
-    <!-- 加载编辑器的容器 -->
-    <script id="container" name="content" type="text/plain">
-        这里写你的初始化内容
-    </script>
-    <!-- 配置文件 -->
-    <script type="text/javascript" src="__PUBLIC__/ueditor/ueditor.config.js"></script>
-    <!-- 编辑器源码文件 -->
-    <script type="text/javascript" src="__PUBLIC__/ueditor/ueditor.all.js"></script>
-    <!-- 实例化编辑器 -->
-    <script type="text/javascript">
-        var ue = UE.getEditor('container');
     </script>
 </div>
 </body>
