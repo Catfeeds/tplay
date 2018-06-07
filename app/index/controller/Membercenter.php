@@ -32,7 +32,7 @@ class Membercenter extends Controller
         }
 
         //获取头像和昵称
-        $where['code'] = Session::get('user_code');
+        $where['code'] = $_SERVER['HTTP_CODE'];
         $model = new User();
         $res = $model->field('wx_nick_name,wx_head_img_url')->where($where)->find()->toArray();
 
@@ -57,7 +57,8 @@ class Membercenter extends Controller
 
         $model = new visitModel();
         $where['status']= input('status');
-        $where['user_code'] = Session::get('user_code');
+        $where['user_code'] = $_SERVER['HTTP_CODE'];
+        $where['user_code'] = $_SERVER['HTTP_CODE'];
         //验证字段
         $result = $this->validate(
             [
