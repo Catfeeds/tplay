@@ -244,6 +244,11 @@ class Membercenter extends Controller
 
         $res = $model->field('me_doctor.id,name,head_img,title,hospital_code,department_code,original_price')->join('me_doctor','me_doctor.code=me_favorite.follow_code')->where($where)->select();
         if($res){
+            foreach ($res as $k=>$v){
+                $res[$k]['head_img'] = geturl($v['head_img']);
+                $res[$k]['head_img'] = str_replace("\\","/",$res[$k]['head_img']);
+            }
+
             return success($res);
         }else{
             return emptyResult();
