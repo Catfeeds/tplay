@@ -9,6 +9,9 @@
 
 namespace app\admin\controller;
 
+use app\admin\model\User;
+use app\admin\model\Doctor;
+use app\admin\model\VisitLine;
 use \think\Db;
 use app\admin\controller\Permissions;
 use \think\Cookie;
@@ -34,12 +37,27 @@ class Inquisition extends Permissions
             $where['create_time'] = [['>=',$min_time],['<=',$max_time]];
         }
 
-        $inquisition = $model->field('me_visit.id,me_visit.status,me_visit.origianl_price,me_visit.actual_pay,me_visit.create_time,me_visit.inquiry_dt,me_visit.reply_dt,me_user.name,me_doctor.name as doctor_name')
+        $inquisition = $model->field('me_visit.id,me_visit.status,me_visit.origianl_price,me_visit.actual_pay,me_visit.create_time,me_visit.inquiry_dt_last,me_visit.reply_dt,me_visit.reply_dt_last,me_user.name,me_doctor.name as doctor_name')
             ->join('me_user','me_user.code = me_visit.user_code')
             ->join('me_doctor','me_doctor.code = me_visit.doctor_code')
             ->where($where)
             ->order('create_time desc')
-            ->paginate(20);;
+            ->paginate(20);
+
+        //计算问题是否超时
+        foreach ($inquisition as $k=>$v){
+            //SELECT TIMESTAMPDIFF(MINUTE, INQUIRY_DT_LAST ,  IFNULL(REPLY_DT_LAST, NOW( )) ) from me_visit
+            $sql = "SELECT TIMESTAMPDIFF(MINUTE, INQUIRY_DT_LAST ,  IFNULL(REPLY_DT_LAST, NOW( )) ) as minute from me_visit where id = ".$v['id'];
+            $res = Db::query($sql);
+            if($res[0]['minute']>0 && $res[0]['minute']<=10){  //超时时间 10分钟
+                $inquisition[$k]['is_overtime'] = 0;
+            }else{
+                $inquisition[$k]['is_overtime'] = 1;
+            }
+
+        }
+
+
 
         $this->assign('inquisition',$inquisition);
         return $this->fetch();
@@ -52,7 +70,22 @@ class Inquisition extends Permissions
      */
 
     public function detail(){
+        $id = $this->request->has('id') ? $this->request->param('id', 0, 'intval') : 0;
+        $where['visit_id'] = $id;
+        $visit = new VisitLine();
+        $res = $visit->where($where)->order('create_time')->select();
 
+        $v = new Visit();
+        $x = $v->find($id);
+        $d = new Doctor();
+        $doctor = $d->where(['code'=>$x['doctor_code']])->find();
+        $u = new User();
+        $user = $u->join('me_user_patient','me_user_patient.user_id = me_user.id')->where(['code'=>$x['user_code']])->find();
+
+        $this->assign('doctor',$doctor);//医生信息
+        $this->assign('user',$user);//问诊人信息
+        $this->assign('list',$res);//问题列表
+        return $this->fetch();
     }
 
 
@@ -61,6 +94,33 @@ class Inquisition extends Permissions
      */
 
     public function reply(){
+        $id = $this->request->has('id') ? $this->request->param('id', 0, 'intval') : 0;
+
+        if($this->request->isPost()){
+            $data['src'] ='S';
+            $data['content'] = input('content');
+            $data['visit_id'] = input('id');
+            $v = new Visit();
+            $x = $v->find(input('id'));
+            $data['doctor_code'] = $x['doctor_code'];
+            $visit = new VisitLine();
+            if(false == $visit->save($data)) {
+                return $this->error('操作失败');
+            } else {
+                //修改最后回复时间
+                $vi = new Visit();
+                $data_v['status'] = 'A';
+                $data_v['reply_dt_last'] = date('Y-m-d H:i:s');
+                $vi->save($data_v,['id'=>$id]);
+
+                return $this->success('操作成功','admin/inquisition/index');
+            }
+
+
+        }else{
+            $this->assign('id',$id);
+            return $this->fetch();
+        }
 
 
     }

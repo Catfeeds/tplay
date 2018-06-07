@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>玛恩医生</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="__PUBLIC__/layui/css/layui.css"  media="all">
+    <link rel="stylesheet" href="__PUBLIC__/font-awesome/css/font-awesome.min.css" media="all" />
+    <link rel="stylesheet" href="__CSS__/admin.css"  media="all">
+</head>
+<style>
+    .width{
+        width:500px;
+        float: left;
+    }
+</style>
+<body style="padding:10px;">
+<div class="tplay-body-div">
+    <div style="margin-top: 20px;">
+    </div>
+    <form class="layui-form" id="customer">
+        <div class="layui-form-item">
+            ---------------------问诊人信息---------------------
+        </div>
+
+        <div class="layui-form-item width">
+            <label class="layui-form-label">姓名</label>
+            <div class="layui-input-inline">
+                <input lay-verify="name" readonly class="layui-input" type="text" value="{$user.name}">
+            </div>
+        </div>
+        <div class="layui-form-item width">
+            <label class="layui-form-label">年龄</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input"  readonly value="{$user.age}" />
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">性别</label>
+            <div class="layui-input-inline">
+                <input lay-verify="sex" autocomplete="off" readonly class="layui-input" type="text" value=" {if condition="$user.sex eq 1 "} 男
+                {else /} 女
+                {/if}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">手机号</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input"  readonly value="{$user.phone}" />
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">身高</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input"  readonly value="{$user.height}" />
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">体重</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input"  readonly value="{$user.weight}" />
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">有无过敏史</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input"  readonly value="{$user.is_allergy}" />
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">病例、过往病史</label>
+            <div class="layui-input-block" style="max-width: 600px">
+                <textarea placeholder="请输入内容" class="layui-textarea" readonly>{$user.medical_history}</textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            ---------------------接诊医生信息---------------------
+        </div>
+        <div class="layui-form-item width">
+            <label class="layui-form-label">医生编号</label>
+            <div class="layui-input-inline">
+                <input lay-verify="name" readonly class="layui-input" type="text" value="{$doctor.code}">
+            </div>
+        </div>
+        <div class="layui-form-item width">
+            <label class="layui-form-label">姓名</label>
+            <div class="layui-input-inline">
+                <input lay-verify="name" readonly class="layui-input" type="text" value="{$doctor.name}">
+            </div>
+        </div>
+        <div class="layui-form-item width">
+            <label class="layui-form-label">职位</label>
+            <div class="layui-input-inline">
+                <input lay-verify="name" readonly class="layui-input" type="text" value="{$doctor.title}">
+            </div>
+        </div>
+        <div class="layui-form-item width">
+            <label class="layui-form-label">联系电话</label>
+            <div class="layui-input-inline">
+                <input lay-verify="name" readonly class="layui-input" type="text" value="{$doctor.phone}">
+            </div>
+        </div>
+        <div class="layui-form-item width">
+            <label class="layui-form-label">费用</label>
+            <div class="layui-input-inline">
+                <input lay-verify="name" readonly class="layui-input" type="text" value="{$doctor.original_price}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            ---------------------问题详情---------------------
+        </div>
+        {volist name="list" id="vo"}
+        <div class="layui-form-item">
+            {if condition="$vo.user_code eq null "}
+            <label class="layui-form-label">医生回答</label>
+            <div class="layui-input-block" style="max-width: 600px">
+                <textarea  class="layui-textarea" readonly>{$vo.content}</textarea>
+            </div>
+            {else /}
+            <label class="layui-form-label" style="width: 250px;">第{$key+1}次提问 —— {$vo.create_time}</label>
+            <div class="layui-input-block" style="max-width: 600px">
+                <textarea  class="layui-textarea" readonly>{$vo.content}</textarea>
+            </div>
+            {/if}
+
+        </div>
+        {/volist}
+
+
+        <input type="hidden" name="id" value="">
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <!--
+                <button class="layui-btn" lay-submit lay-filter="admin">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                -->
+            </div>
+        </div>
+
+    </form>
+
+
+    <script src="__PUBLIC__/layui/layui.js"></script>
+    <script src="__PUBLIC__/jquery/jquery.min.js"></script>
+    <script>
+        var message;
+        layui.config({
+            base: '__JS__/',
+            version: '1.0.1'
+        }).use(['app', 'message'], function() {
+            var app = layui.app,
+                $ = layui.jquery,
+                layer = layui.layer;
+            //将message设置为全局以便子页面调用
+            message = layui.message;
+            //主入口
+            app.set({
+                type: 'iframe'
+            }).init();
+        });
+    </script>
+    <script>
+        layui.use(['layer', 'form'], function() {
+            var layer = layui.layer,
+                $ = layui.jquery,
+                form = layui.form;
+            $(window).on('load', function() {
+                form.on('submit(admin)', function(data) {
+                    $.ajax({
+                        url:"{:url('admin/detail/update')}",
+                        data:$('#customer').serialize(),
+                        type:'post',
+                        async: false,
+                        success:function(res) {
+                            if(res.code == 1) {
+                                layer.alert(res.msg, function(index){
+                                    location.href = res.url;
+                                })
+                            } else {
+                                layer.msg(res.msg);
+                            }
+                        }
+                    })
+                    return false;
+                });
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

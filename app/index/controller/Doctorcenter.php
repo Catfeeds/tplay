@@ -87,8 +87,6 @@ class Doctorcenter extends Controller
         if(!$doctor_code){
             return failLogin("您还未登录");
         }
-        $doctor_code ='0004';
-
 
         $model = new visitModel();
         $where['me_visit.status'] = input('status');
@@ -260,6 +258,33 @@ class Doctorcenter extends Controller
         $data['content'] = input('content');
         $data['doctor_code'] = $doctor_code;
         $data['visit_id'] = $id;
+
+        //验证字段
+        $result = $this->validate(
+            [
+                'doctor_code'  => $data['doctor_code'],
+                'visit_id' => $data['visit_id'],
+                'content' => $data['content']
+
+            ],
+            [
+                'user_code'  => 'require',
+                'visit_id'=>'require',
+                'content' => 'require'
+
+            ],
+            [
+                'user_code.require'  =>  '医生编号必须',
+                'visit_id.require' =>'问诊id必须',
+                'content.require' =>'内容必须'
+
+            ]
+        );
+
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
 
         $re = $model->save($data);
         if ($re){

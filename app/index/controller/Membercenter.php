@@ -57,9 +57,9 @@ class Membercenter extends Controller
         }
 
         $model = new visitModel();
-        $where['status']= input('status');
+        $where['me_visit.status']= input('status');
         $where['user_code'] = $_SERVER['HTTP_CODE'];
-        $where['user_code'] = $_SERVER['HTTP_CODE'];
+
         //验证字段
         $result = $this->validate(
             [
@@ -79,7 +79,9 @@ class Membercenter extends Controller
             // 验证失败 输出错误信息
             return failMsg($result);
         }
-        $res = $model->where($where)->order('create_time desc')->select();
+        $res = $model->field('me_visit.*,me_doctor.name,me_doctor.title,me_doctor.phone')
+            ->join('me_doctor','me_doctor.code= me_visit.doctor_code')
+            ->where($where)->order('create_time desc')->select();
 
         if($res){
             return success($res);
@@ -130,6 +132,63 @@ class Membercenter extends Controller
         }else{
             return emptyResult();
         }
+    }
+
+    /**
+     * 回复问题
+     */
+    public function answer(){
+        //检查是否已登录
+        $user_code = $_SERVER['HTTP_CODE'];
+        if(!$user_code){
+            return failLogin("您还未登录");
+        }
+        //判断是否有权限操作
+
+
+        //问诊id  visit_id
+        $id = input('visit_id');
+        $model = new VisitLine();
+        $data['content'] = input('content');
+        $data['user_code'] = $user_code;
+        $data['visit_id'] = $id;
+
+        //验证字段
+        $result = $this->validate(
+            [
+                'user_code'  => $data['user_code'],
+                'visit_id' => $data['visit_id'],
+                'content' => $data['content']
+
+            ],
+            [
+                'user_code'  => 'require',
+                'visit_id'=>'require',
+                'content' => 'require'
+
+            ],
+            [
+                'user_code.require'  =>  '用户编号必须',
+                'visit_id.require' =>'问诊id必须',
+                'content.require' =>'内容必须'
+
+            ]
+        );
+
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
+
+        $re = $model->save($data);
+        if ($re){
+            return success();
+        }else{
+            return failMsg('操作失败');
+        }
+
+
+
     }
 
 

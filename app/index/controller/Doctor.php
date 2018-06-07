@@ -145,24 +145,22 @@ class Doctor extends Controller
        // 获取表单提交过来的文件
         if($this->request->file('file')){
             $file = $this->request->file('file');
-        }else{
-            $res['code']=1;
-            $res['msg']='没有上传文件';
-            return json($res);
+            //上传的时候的原文件名
+            $filename = $file -> getInfo()['name'];
+            var_dump($filename);
+            $dir = config('upload_path');// 自定义文件上传路径
+            if (!is_dir($dir)) {
+                mkdir($dir,0777,true);
+            }
+            $info = $file->move($dir);// 将文件上传指定目录
+            //获取文件的全路径
+            $post_data['url'] = str_replace('\\', '/', $info->getPathname());//GetPathName返回文件路径(盘符+路径+文件名)*/
         }
 
-        //上传的时候的原文件名
-        $filename = $file -> getInfo()['name'];
-        var_dump($filename);
-        $dir = config('upload_path');// 自定义文件上传路径
-        if (!is_dir($dir)) {
-            mkdir($dir,0777,true);
-        }
-        $info = $file->move($dir);// 将文件上传指定目录
-        //获取文件的全路径
-        $post_data['url'] = str_replace('\\', '/', $info->getPathname());//GetPathName返回文件路径(盘符+路径+文件名)*/
 
-        $user_id = Session::get('user_id');
+
+
+        $user_id = $_SERVER['HTTP_USER_ID'];
         //检查是否已登录
         if(!$user_id){
             return failLogin("您还未登录");
