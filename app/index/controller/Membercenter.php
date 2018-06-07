@@ -242,7 +242,7 @@ class Membercenter extends Controller
         $where['user_code'] = $_SERVER['HTTP_CODE'];
         $model = new favoriteModel();
 
-        $res = $model->field('me_doctor.id,name,head_img,title,hospital_code,department_code,original_price')->join('me_doctor','me_doctor.code=me_favorite.follow_code')->where($where)->select();
+        $res = $model->field('me_doctor.id,code,name,head_img,title,hospital_code,department_code,original_price')->join('me_doctor','me_doctor.code=me_favorite.follow_code')->where($where)->select();
         if($res){
             foreach ($res as $k=>$v){
                 $res[$k]['head_img'] = geturl($v['head_img']);
@@ -252,7 +252,7 @@ class Membercenter extends Controller
 
                 //总计多少个回答
                 $visit = new visitModel();
-                $ww['doctor_code']= $v['follow_code'];
+                $ww['doctor_code']= $v['code'];
                 $res[$k]['count']=$visit->where($ww)->count();
             }
 
