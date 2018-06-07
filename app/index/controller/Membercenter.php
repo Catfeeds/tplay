@@ -252,7 +252,7 @@ class Membercenter extends Controller
 
                 //总计多少个回答
                 $visit = new visitModel();
-                $ww['doctor_code']= $v['code'];
+                $ww['doctor_code']= $v['follow_code'];
                 $res[$k]['count']=$visit->where($ww)->count();
             }
 
