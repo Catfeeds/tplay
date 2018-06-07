@@ -16,6 +16,7 @@ use app\index\model\Visit as visitModel;//问诊模型
 use app\index\model\VisitLine;
 use app\index\model\User;
 use app\index\model\Doctor;
+use \think\db;
 use think\Session;
 
 class Membercenter extends Controller
@@ -243,21 +244,29 @@ class Membercenter extends Controller
         $where['user_code'] = $_SERVER['HTTP_CODE'];
         $model = new favoriteModel();
 
-        $res = $model->field('me_doctor.id,code,name,head_img,title,hospital_code,department_code,original_price')->join('me_doctor','me_doctor.code=me_favorite.follow_code')->where($where)->select();
-        if($res){
-            foreach ($res as $k=>$v){
-                $res[$k]['head_img'] = geturl($v['head_img']);
-                $res[$k]['head_img'] = str_replace("\\","/",$res[$k]['head_img']);
-                //平均响应多少分钟
-                $res[$k]['minute'] = '15';
+        $doctor = $model->field('me_doctor.id,code,name,head_img,title,hospital_code,department_code,original_price')->join('me_doctor','me_doctor.code=me_favorite.follow_code')->where($where)->select();
+        if($doctor){
+            foreach ($doctor as $k=>$v){
+                $doctor[$k]['head_img'] = geturl($v['head_img']);
+                $doctor[$k]['head_img'] = str_replace("\\","/",$res[$k]['head_img']);
 
                 //总计多少个回答
                 $visit = new visitModel();
                 $ww['doctor_code']= $v['code'];
-                $res[$k]['count']=$visit->where($ww)->count();
+                $doctor[$k]['count']=$visit->where($ww)->count();
+
+                //平均响应多少分钟
+                //SELECT TIMESTAMPDIFF(MINUTE,REPLY_DT,INQUIRY_DT) from me_visit
+                $sql = "SELECT TIMESTAMPDIFF(MINUTE,REPLY_DT,INQUIRY_DT) from me_visit";
+                $res = Db::query($sql);
+                if($res){
+                    $doctor[$k]['minute'] = $res/$doctor[$k]['count'];
+                }else{
+                    $doctor[$k]['minute'] = 0;
+                }
             }
 
-            return success($res);
+            return success($doctor);
         }else{
             return emptyResult();
         }
