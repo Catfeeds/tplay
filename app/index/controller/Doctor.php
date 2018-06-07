@@ -85,13 +85,21 @@ class Doctor extends Controller
             foreach ($doctor as $k=>$v){
                 $doctor[$k]['head_img'] = geturl($v['head_img']);
                 $doctor[$k]['head_img'] = str_replace("\\","/",$doctor[$k]['head_img']);
-                //平均响应多少分钟
-                $doctor[$k]['minute'] = '15';
 
                 //总计多少个回答
                 $visit = new Visit();
                 $ww['doctor_code']= $v['code'];
                 $doctor[$k]['count']=$visit->where($ww)->count();
+                //平均响应多少分钟
+                //SELECT TIMESTAMPDIFF(MINUTE,REPLY_DT,INQUIRY_DT) from me_visit
+                $sql = "SELECT TIMESTAMPDIFF(MINUTE,REPLY_DT,INQUIRY_DT) from me_visit";
+                $res = Db::query($sql);
+                if($res){
+                    $doctor[$k]['minute'] = $res/$doctor[$k]['count'];
+                }else{
+                    $doctor[$k]['minute'] = 0;
+                }
+
 
                 //查询该医生是否被关注
                 $user_code = $_SERVER['HTTP_CODE'];

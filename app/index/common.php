@@ -255,6 +255,17 @@ function paraFilter ( &$para ) {
         $url = 'https://api.weixin.qq.com/sns/jscode2session?appid='.config('C_APPID').'&secret='.config('C_APPSECRET').'&js_code='.$param['code'].'&grant_type=authorization_code';
         return curl_data($url,$param);
     }
+
+/**
+ * 获取微信小程序oepnid等信息
+ * @param array $param
+ * @return mixed
+ */
+function send_url_d($param=[]){
+    $url = 'https://api.weixin.qq.com/sns/jscode2session?appid='.config('D_APPID').'&secret='.config('D_APPSECRET').'&js_code='.$param['code'].'&grant_type=authorization_code';
+    return curl_data($url,$param);
+}
+
     /**
      * 获取用户增减数据
      * @param array $param

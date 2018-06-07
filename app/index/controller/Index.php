@@ -120,14 +120,13 @@ class Index extends Controller
         if(!$code){
             return failMsg('code不能为空');
         }
-        $res_wx = send_url(['code'=>$code]);
+        $res_wx = send_url_d(['code'=>$code]);
         $res_wx = json_decode($res_wx,true);
         if(isset($res_wx['errcode'])){
             return failMsg('code失效');
         }
         $post_data['open_id_dt'] = $res_wx['openid'];
         $post_data['union_id'] = $res_wx['session_key'];
-        //$post_data['open_id_dt'] = input('openid');
 
         $post_data['name']  = input('name');
         $post_data['wx_nick_name'] = input('nick_name');
