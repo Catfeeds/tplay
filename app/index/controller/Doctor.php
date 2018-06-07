@@ -8,6 +8,7 @@
  */
 
 namespace app\index\controller;
+use app\index\model\Favorite;
 use app\index\model\Visit;
 use app\index\model\VisitLine;
 use \think\Controller;
@@ -70,7 +71,7 @@ class Doctor extends Controller
                 'id'  => 'require',
             ],
             [
-                'id.require'  =>  '医生编号必须',
+                'id.require'  =>  '医生id必须',
             ]
         );
 
@@ -84,9 +85,17 @@ class Doctor extends Controller
             foreach ($doctor as $k=>$v){
                 $doctor[$k]['head_img'] = geturl($v['head_img']);
                 $doctor[$k]['head_img'] = str_replace("\\","/",$doctor[$k]['head_img']);
+                //查询该医生是否被关注
+                $user_code = $_SERVER['HTTP_CODE'];
+                $favorite = new Favorite();
+                $f = $favorite->where(['user_code'=>$user_code,'follow_code'=>$v['code']])->find();
+                if($f){
+                    $doctor[$k]['is_collect'] =1;
+                }else{
+                    $doctor[$k]['is_collect'] =0;
+                }
+                //查询跟该医生相关的最新一个提问
             }
-            //查询跟该医生相关的最新一个提问
-
 
             return success($doctor);
         }else{

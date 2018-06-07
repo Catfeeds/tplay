@@ -178,6 +178,54 @@ class Membercenter extends Controller
 
     }
 
+    /**
+     * 取消关注
+     */
+    public function cancelCollect(){
+        $user_id = $_SERVER['HTTP_USER_ID'];
+        //检查是否已登录
+        if(!$user_id){
+            return failLogin("您还未登录");
+        }
+
+        $data['user_code'] = $_SERVER['HTTP_CODE'];
+        $data['follow_code'] = input('doctor_code');
+        //验证字段
+        $result = $this->validate(
+            [
+                'follow_code'  => $data['follow_code'],
+            ],
+            [
+                'follow_code'  => 'require',
+
+            ],
+            [
+                'follow_code.require'  =>  '医生编号必须'
+
+            ]
+        );
+
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
+
+        //查询该编号是否存在
+        $doctor = new Doctor();
+        $r = $doctor ->where(['code'=>$data['follow_code']])->find();
+        if(!$r) return failMsg('被取消的信息不存在');
+
+        $model = new favoriteModel();
+        $w['user_code'] = $data['user_code'];
+        $w['follow_code'] = $data['follow_code'];
+        $res = $model->where($w)->delete();
+        if($res){
+            return success();
+        }else{
+            return failMsg('取消失败');
+        }
+
+    }
 
 
     /**
@@ -266,8 +314,6 @@ class Membercenter extends Controller
 
         if($res){
             return success($res);
-        }else{
-            return failMsg('获取失败');
         }
 
     }
