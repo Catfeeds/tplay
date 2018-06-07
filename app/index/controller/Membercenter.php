@@ -248,7 +248,7 @@ class Membercenter extends Controller
         if($doctor){
             foreach ($doctor as $k=>$v){
                 $doctor[$k]['head_img'] = geturl($v['head_img']);
-                $doctor[$k]['head_img'] = str_replace("\\","/",$res[$k]['head_img']);
+                $doctor[$k]['head_img'] = str_replace("\\","/",$doctor[$k]['head_img']);
 
                 //总计多少个回答
                 $visit = new visitModel();
@@ -257,10 +257,15 @@ class Membercenter extends Controller
 
                 //平均响应多少分钟
                 //SELECT TIMESTAMPDIFF(MINUTE,REPLY_DT,INQUIRY_DT) from me_visit
-                $sql = "SELECT TIMESTAMPDIFF(MINUTE,REPLY_DT,INQUIRY_DT) from me_visit";
+                $sql = "SELECT TIMESTAMPDIFF(MINUTE,INQUIRY_DT,REPLY_DT) as minute from me_visit where doctor_code = ".$v['code'];
                 $res = Db::query($sql);
                 if($res){
-                    $doctor[$k]['minute'] = $res/$doctor[$k]['count'];
+                    $sum = 0;
+                    foreach ($res as $vv){
+                        $sum += $vv['minute'];
+                    }
+
+                    $doctor[$k]['minute'] = $sum/$doctor[$k]['count'];
                 }else{
                     $doctor[$k]['minute'] = 0;
                 }
