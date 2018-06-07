@@ -247,6 +247,13 @@ class Membercenter extends Controller
             foreach ($res as $k=>$v){
                 $res[$k]['head_img'] = geturl($v['head_img']);
                 $res[$k]['head_img'] = str_replace("\\","/",$res[$k]['head_img']);
+                //平均响应多少分钟
+                $res[$k]['minute'] = '15';
+
+                //总计多少个回答
+                $visit = new visitModel();
+                $ww['doctor_code']= $v['code'];
+                $res[$k]['count']=$visit->where($ww)->count();
             }
 
             return success($res);
