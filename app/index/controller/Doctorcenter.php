@@ -9,6 +9,7 @@
 
 namespace app\index\controller;
 
+use app\index\model\Account;
 use app\index\model\User;
 use app\index\model\UserPatient;
 use app\index\model\Visit;
@@ -334,8 +335,13 @@ class Doctorcenter extends Controller
         //查看该用户是否存在
         $user = new User();
         $user_id = $_SERVER['HTTP_USER_ID'];
-
         $u = $user->field('open_id_dt')->find($user_id);
+        if(!$u) return failMsg('您还不是本平台用户');
+        //检查该用户是否有可提现余额
+        $account = new Account();
+        $amount = $account->where(['code'=>$doctor_code,'type'=>'DT'])->sum('amount');
+        if($amount<=0) return failMsg('余额不足，无法提现');
+
         $model = new paymentLineModel();
         $data['open_id'] = $u['open_id_dt'];
         $data['doctor_code'] = $doctor_code;
@@ -373,6 +379,9 @@ class Doctorcenter extends Controller
             // 验证失败 输出错误信息
             return failMsg($result);
         }
+
+        //检查申请金额是否在可申请余额范围之类
+        if($data['amount']>$amount) return failMsg('申请金额不在可申请余额范围之类，请重新填写金额');
 
         $res = $model->save($data);
         if ($res) {
