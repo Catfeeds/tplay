@@ -142,24 +142,6 @@ class Doctor extends Controller
      */
     public function putQuestions()
     {
-       // 获取表单提交过来的文件
-        if($this->request->file('file')){
-            $file = $this->request->file('file');
-            //上传的时候的原文件名
-            $filename = $file -> getInfo()['name'];
-            var_dump($filename);
-            $dir = config('upload_path');// 自定义文件上传路径
-            if (!is_dir($dir)) {
-                mkdir($dir,0777,true);
-            }
-            $info = $file->move($dir);// 将文件上传指定目录
-            //获取文件的全路径
-            $post_data['url'] = str_replace('\\', '/', $info->getPathname());//GetPathName返回文件路径(盘符+路径+文件名)*/
-        }
-
-
-
-
         $user_id = $_SERVER['HTTP_USER_ID'];
         //检查是否已登录
         if(!$user_id){
@@ -230,9 +212,6 @@ class Doctor extends Controller
         $re_line = $visit_line->save($post_data);
         if(!$re_line) return failMsg('操作失败');
 
-        //向附件表插入图片或视频
-
-
         //首次提问  向账户表插入一条收入记录
 
 
@@ -242,6 +221,52 @@ class Doctor extends Controller
 
 
     }
+
+    /**
+     * 图片上传方法
+     * @return [type] [description]
+     */
+    public function upload($module='index',$use='index_questions')
+    {
+        if($this->request->file('file')){
+            $file = $this->request->file('file');
+        }else{
+            $res['code']=1;
+            $res['msg']='没有上传文件';
+            return json($res);
+        }
+        $module = $this->request->has('module') ? $this->request->param('module') : $module;//模块
+        $web_config = Db::name('webconfig')->where('web','web')->find();
+        $info = $file->validate(['size'=>$web_config['file_size']*1024,'ext'=>$web_config['file_type']])->rule('date')->move(ROOT_PATH . 'public' . DS . 'uploads' . DS . $module . DS . $use);
+        if($info) {
+            //写入到附件表
+            $data = [];
+            $data['module'] = $module;
+            $data['filename'] = $info->getFilename();//文件名
+            $data['filepath'] = DS . 'uploads' . DS . $module . DS . $use . DS . $info->getSaveName();//文件路径
+            $data['fileext'] = $info->getExtension();//文件后缀
+            $data['filesize'] = $info->getSize();//文件大小
+            $data['create_time'] = time();//时间
+            $data['uploadip'] = $this->request->ip();//IP
+            $data['user_id'] = Session::has('admin') ? Session::get('admin') : 0;
+            if($data['module'] = 'index') {
+                //通过后台上传的文件直接审核通过
+                $data['status'] = 1;
+                $data['admin_id'] = $data['user_id'];
+                $data['audit_time'] = time();
+            }
+            $data['use'] = $this->request->has('use') ? $this->request->param('use') : $use;//用处
+            $res['id'] = Db::name('attachment')->insertGetId($data);
+            $res['src'] = str_replace('\\', '/',DS . 'uploads' . DS . $module . DS . $use . DS . $info->getSaveName());
+
+            return success($res);
+        } else {
+            // 上传失败获取错误信息
+            return failMsg('上传失败');
+            //return $this->error('上传失败：'.$file->getError());
+        }
+    }
+
 
     /**
      * 查看提问列表
