@@ -324,11 +324,13 @@ class Doctorcenter extends Controller
         $where['type'] = 'DT';
         $where['code'] = $doctor_code;
         $model = new accountModel();
-        $re = $model->where($where)->sum('amount');
-        if ($re) {
+        $sum = $model->where($where)->sum('amount');
+        if ($sum) {
+            $re['amount'] = $sum;
             return success($re);
         } else {
-            return failMsg('查询失败');
+            $re['amount'] = '0.00';
+            return success($re);
         }
 
 
@@ -352,7 +354,8 @@ class Doctorcenter extends Controller
         if ($re) {
             return success($re);
         } else {
-            return failMsg('查询失败');
+            $re=[];
+            return success($re);
         }
 
 
@@ -546,7 +549,7 @@ class Doctorcenter extends Controller
      * 服务定价
      */
     public function  setPrice(){
-        $user_id = $_SERVER['HTTP_USER_ID'];;
+        $user_id = $_SERVER['HTTP_USER_ID'];
         //检查是否已登录
         if(!$user_id){
             return failLogin("您还未登录");
@@ -581,6 +584,28 @@ class Doctorcenter extends Controller
             return failMsg('设置失败');
         }
 
+
+
+    }
+
+    /**
+     * 查看服务定价
+     */
+    public function  seePrice(){
+        $user_id = $_SERVER['HTTP_USER_ID'];
+        //检查是否已登录
+        if(!$user_id){
+            return failLogin("您还未登录");
+        }
+        $doctor_code = $_SERVER['HTTP_CODE'];
+
+        $model = new doctorModel();
+        $res = $model ->field('original_price')->where(['code'=>$doctor_code])->find()->toArray();
+        if($res){
+            return success($res);
+        }else{
+            return failMsg('获取失败');
+        }
 
 
     }
