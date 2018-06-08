@@ -8,6 +8,8 @@
  */
 
 namespace app\index\controller;
+
+use app\index\model\Account;
 use app\index\model\Favorite;
 use app\index\model\Visit;
 use app\index\model\VisitLine;
@@ -27,41 +29,41 @@ class Doctor extends Controller
         //实例化医生模型
         $model = new doctorModel();
 
-        $page = input('page','1');
-        $pagesize = input('pagesize','5');
+        $page = input('page', '1');
+        $pagesize = input('pagesize', '5');
 
 
-        $doctor =  $model->field('id,code,name,head_img,title,hospital_code,department_code,original_price,tag')->limit(($page-1)*$pagesize,$pagesize)->order('create_time desc') ->select();
+        $doctor = $model->field('id,code,name,head_img,title,hospital_code,department_code,original_price,tag')->limit(($page - 1) * $pagesize, $pagesize)->order('create_time desc')->select();
 
 
-        if($doctor){
-            foreach ($doctor as $k=>$v){
+        if ($doctor) {
+            foreach ($doctor as $k => $v) {
                 $doctor[$k]['head_img'] = geturl($v['head_img']);
-                $doctor[$k]['head_img'] = str_replace("\\","/",$doctor[$k]['head_img']);
+                $doctor[$k]['head_img'] = str_replace("\\", "/", $doctor[$k]['head_img']);
 
                 //总计多少个回答
                 $visit = new Visit();
-                $ww['doctor_code']= $v['code'];
-                $doctor[$k]['count']=$visit->where($ww)->count();
+                $ww['doctor_code'] = $v['code'];
+                $doctor[$k]['count'] = $visit->where($ww)->count();
 
                 //平均响应多少分钟
                 //SELECT TIMESTAMPDIFF(MINUTE,REPLY_DT,INQUIRY_DT) from me_visit
-                $sql = "SELECT TIMESTAMPDIFF(MINUTE,INQUIRY_DT,REPLY_DT) as minute from me_visit where doctor_code = ".$v['code'];
+                $sql = "SELECT TIMESTAMPDIFF(MINUTE,INQUIRY_DT,REPLY_DT) as minute from me_visit where doctor_code = " . $v['code'];
                 $res = Db::query($sql);
-                if($res){
+                if ($res) {
                     $sum = 0;
-                    foreach ($res as $vv){
+                    foreach ($res as $vv) {
                         $sum += $vv['minute'];
                     }
 
-                    $doctor[$k]['minute'] = $sum/$doctor[$k]['count'];
-                }else{
+                    $doctor[$k]['minute'] = $sum / $doctor[$k]['count'];
+                } else {
                     $doctor[$k]['minute'] = 0;
                 }
             }
 
             return success($doctor);
-        }else{
+        } else {
             return emptyResult();
         }
     }
@@ -77,43 +79,43 @@ class Doctor extends Controller
         //验证字段
         $result = $this->validate(
             [
-                'id'  => input('id'),
+                'id' => input('id'),
             ],
             [
-                'id'  => 'require',
+                'id' => 'require',
             ],
             [
-                'id.require'  =>  '医生id必须',
+                'id.require' => '医生id必须',
             ]
         );
 
-        if(true !== $result){
+        if (true !== $result) {
             // 验证失败 输出错误信息
             return failMsg($result);
         }
 
-        $doctor =  $model->where($where)->select();
-        if($doctor){
-            foreach ($doctor as $k=>$v){
+        $doctor = $model->where($where)->select();
+        if ($doctor) {
+            foreach ($doctor as $k => $v) {
                 $doctor[$k]['head_img'] = geturl($v['head_img']);
-                $doctor[$k]['head_img'] = str_replace("\\","/",$doctor[$k]['head_img']);
+                $doctor[$k]['head_img'] = str_replace("\\", "/", $doctor[$k]['head_img']);
 
                 //总计多少个回答
                 $visit = new Visit();
-                $ww['doctor_code']= $v['code'];
-                $doctor[$k]['count']=$visit->where($ww)->count();
+                $ww['doctor_code'] = $v['code'];
+                $doctor[$k]['count'] = $visit->where($ww)->count();
                 //平均响应多少分钟
                 //SELECT TIMESTAMPDIFF(MINUTE,REPLY_DT,INQUIRY_DT) from me_visit
-                $sql = "SELECT TIMESTAMPDIFF(MINUTE,INQUIRY_DT,REPLY_DT) as minute from me_visit where doctor_code = ".$v['code'];
+                $sql = "SELECT TIMESTAMPDIFF(MINUTE,INQUIRY_DT,REPLY_DT) as minute from me_visit where doctor_code = " . $v['code'];
                 $res = Db::query($sql);
-                if($res){
+                if ($res) {
                     $sum = 0;
-                    foreach ($res as $vv){
+                    foreach ($res as $vv) {
                         $sum += $vv['minute'];
                     }
 
-                    $doctor[$k]['minute'] = $sum/$doctor[$k]['count'];
-                }else{
+                    $doctor[$k]['minute'] = $sum / $doctor[$k]['count'];
+                } else {
                     $doctor[$k]['minute'] = 0;
                 }
 
@@ -121,17 +123,17 @@ class Doctor extends Controller
                 //查询该医生是否被关注
                 $user_code = $_SERVER['HTTP_CODE'];
                 $favorite = new Favorite();
-                $f = $favorite->where(['user_code'=>$user_code,'follow_code'=>$v['code']])->find();
-                if($f){
-                    $doctor[$k]['is_collect'] =1;
-                }else{
-                    $doctor[$k]['is_collect'] =0;
+                $f = $favorite->where(['user_code' => $user_code, 'follow_code' => $v['code']])->find();
+                if ($f) {
+                    $doctor[$k]['is_collect'] = 1;
+                } else {
+                    $doctor[$k]['is_collect'] = 0;
                 }
                 //查询跟该医生相关的最新一个提问
             }
 
             return success($doctor);
-        }else{
+        } else {
             return emptyResult();
         }
 
@@ -144,7 +146,7 @@ class Doctor extends Controller
     {
         $user_id = $_SERVER['HTTP_USER_ID'];
         //检查是否已登录
-        if(!$user_id){
+        if (!$user_id) {
             return failLogin("您还未登录");
         }
 
@@ -152,93 +154,177 @@ class Doctor extends Controller
         $data['doctor_code'] = input('doctor_code');
         $data['origianl_price'] = input('origianl_price');
         $data['actual_pay'] = input('actual_pay');
-        $post_data['content']  = input('content');
+        $post_data['content'] = input('content');
 
 
         //验证字段
         $result = $this->validate(
             [
-                'doctor_code'  => $data['doctor_code'],
+                'doctor_code' => $data['doctor_code'],
                 'origianl_price' => $data['origianl_price'],
                 'content' => $post_data['content']
 
             ],
             [
-                'doctor_code'  => 'require',
-                'origianl_price'=>'require',
+                'doctor_code' => 'require',
+                'origianl_price' => 'require',
                 'content' => 'require'
 
             ],
             [
-                'doctor_code.require'  =>  '医生编号必须',
-                'origianl_price.require' =>'价格必须',
-                'content.require' =>'内容必须'
+                'doctor_code.require' => '医生编号必须',
+                'origianl_price.require' => '价格必须',
+                'content.require' => '内容必须'
 
             ]
         );
 
-        if(true !== $result){
+        if (true !== $result) {
             // 验证失败 输出错误信息
             return failMsg($result);
         }
 
-        //向问诊表插入数据
-        $visit = new Visit();
+        Db::startTrans();
+        try {
+            //向问诊表插入数据
+            $visit = new Visit();
 
-        //检查是否存在
-        $where['user_code'] = $data['user_code'];
-        $where['doctor_code'] = $data['doctor_code'];
-        $info = $visit->field('id')->where($where)->find();
+            //检查是否存在
+            $where['user_code'] = $data['user_code'];
+            $where['doctor_code'] = $data['doctor_code'];
+            $info = $visit->field('id')->where($where)->find();
 
-        if($info['id']){
-            $visit_id = $info['id'];
-            $re = $visit->save($data,['id'=>$info['id']]);
+            if ($info['id']) {
+                $visit_id = $info['id'];
+                $re = $visit->save($data, ['id' => $info['id']]);
 
-        }else{
+            } else {
 
-            $re = $visit->save($data);
-            $visit_id = $visit->getLastInsID();
+                $re = $visit->save($data);
+                $visit_id = $visit->getLastInsID();
+            }
+
+
+            if (!$re) return failMsg('操作失败');
+
+
+            //向问诊明细表插入数据
+            $post_data['visit_id'] = $visit_id;
+            $post_data['user_code'] = $data['user_code'];
+            $post_data['img'] = input('img');
+
+            $visit_line = new VisitLine();
+            $re_line = $visit_line->save($post_data);
+            if (!$re_line) return failMsg('操作失败');
+
+            //首次提问  向账户表插入一条收入记录
+            $account = new Account();
+            $post_account['code']= $data['doctor_code'];
+            $post_account['order_code'] = "o".date('YmdHis').rand(100,999);
+            $post_account['amount'] = "+".$data['origianl_price'];
+            $a = $account->save($post_account);
+            if(!$a) return failMsg('操作失败');
+
+            Db::commit();
+
+            return success();
+        } catch (\Exception $e) {
+            Db::rollback();
+            return failMsg($e->getMessage());
         }
 
 
-        if(!$re) return failMsg('操作失败');
+    }
+
+    /**
+     * 追加问题
+     */
+    public function append()
+    {
+        //检查是否已登录
+        $user_code = $_SERVER['HTTP_CODE'];
+        if (!$user_code) {
+            return failLogin("您还未登录");
+        }
+        //判断是否有权限操作
 
 
-        //向问诊明细表插入数据
-        $post_data['visit_id'] = $visit_id;
-        $post_data['user_code'] = $data['user_code'];
+        //问诊id  visit_id
+        $id = input('visit_id');
+        $model = new VisitLine();
+        $data['content'] = input('content');
+        $data['user_code'] = $user_code;
+        $data['visit_id'] = $id;
+        $data['img'] = input('img');
 
-        $visit_line = new VisitLine();
-        $re_line = $visit_line->save($post_data);
-        if(!$re_line) return failMsg('操作失败');
+        //验证字段
+        $result = $this->validate(
+            [
+                'user_code' => $data['user_code'],
+                'visit_id' => $data['visit_id'],
+                'content' => $data['content']
 
-        //首次提问  向账户表插入一条收入记录
+            ],
+            [
+                'user_code' => 'require',
+                'visit_id' => 'require',
+                'content' => 'require'
 
+            ],
+            [
+                'user_code.require' => '用户编号必须',
+                'visit_id.require' => '问诊id必须',
+                'content.require' => '内容必须'
 
-        return success();
+            ]
+        );
+
+        if (true !== $result) {
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
+        Db::startTrans();
+        try {
+            $re = $model->save($data);
+
+            if (!$re) return failMsg('操作失败');
+
+            //修改问诊表里面的状态及最后一次提问时间
+            $visit = new Visit();
+            $v = $visit->save(['status' => 'P', 'inquiry_dt_last' => date("Y-m-d H:i:s")], ['id' => $id]);
+            if (!$v) return failMsg('操作失败');
+
+            Db::commit();
+
+            return success();
+        } catch (\Exception $e) {
+            Db::rollback();
+            return failMsg($e->getMessage());
+        }
 
 
 
 
     }
 
+
     /**
      * 图片上传方法
      * @return [type] [description]
      */
-    public function upload($module='index',$use='index_questions')
+    public function upload($module = 'index', $use = 'index_questions')
     {
-        if($this->request->file('file')){
+        if ($this->request->file('file')) {
             $file = $this->request->file('file');
-        }else{
-            $res['code']=1;
-            $res['msg']='没有上传文件';
+        } else {
+            $res['code'] = 1;
+            $res['msg'] = '没有上传文件';
             return json($res);
         }
         $module = $this->request->has('module') ? $this->request->param('module') : $module;//模块
-        $web_config = Db::name('webconfig')->where('web','web')->find();
-        $info = $file->validate(['size'=>$web_config['file_size']*1024,'ext'=>$web_config['file_type']])->rule('date')->move(ROOT_PATH . 'public' . DS . 'uploads' . DS . $module . DS . $use);
-        if($info) {
+        $web_config = Db::name('webconfig')->where('web', 'web')->find();
+        $info = $file->validate(['size' => $web_config['file_size'] * 1024, 'ext' => $web_config['file_type']])->rule('date')->move(ROOT_PATH . 'public' . DS . 'uploads' . DS . $module . DS . $use);
+        if ($info) {
             //写入到附件表
             $data = [];
             $data['module'] = $module;
@@ -249,7 +335,7 @@ class Doctor extends Controller
             $data['create_time'] = time();//时间
             $data['uploadip'] = $this->request->ip();//IP
             $data['user_id'] = Session::has('admin') ? Session::get('admin') : 0;
-            if($data['module'] = 'index') {
+            if ($data['module'] = 'index') {
                 //通过后台上传的文件直接审核通过
                 $data['status'] = 1;
                 $data['admin_id'] = $data['user_id'];
@@ -257,7 +343,7 @@ class Doctor extends Controller
             }
             $data['use'] = $this->request->has('use') ? $this->request->param('use') : $use;//用处
             $res['id'] = Db::name('attachment')->insertGetId($data);
-            $res['src'] = str_replace('\\', '/',DS . 'uploads' . DS . $module . DS . $use . DS . $info->getSaveName());
+            $res['src'] = str_replace('\\', '/', DS . 'uploads' . DS . $module . DS . $use . DS . $info->getSaveName());
 
             return success($res);
         } else {
@@ -274,45 +360,45 @@ class Doctor extends Controller
     public function questions()
     {
 
-        $where['doctor_code']= input('doctor_code');
+        $where['doctor_code'] = input('doctor_code');
         //验证字段
         $result = $this->validate(
             [
-                'doctor_code'  => input('doctor_code'),
+                'doctor_code' => input('doctor_code'),
             ],
             [
-                'doctor_code'  => 'require',
+                'doctor_code' => 'require',
 
             ],
             [
-                'doctor_code.require'  =>  '医生编号必须'
+                'doctor_code.require' => '医生编号必须'
 
             ]
         );
 
-        if(true !== $result){
+        if (true !== $result) {
             // 验证失败 输出错误信息
             return failMsg($result);
         }
         //查询visit_id
         $model = new Visit();
         $arr = $model->field('id')->where($where)->select();
-        if(!$arr) return emptyResult();
-        $res = json_decode(json_encode($arr),true);
-        $ids='';
-        foreach ($res as $v){
-            $ids .= $v['id'].',';
+        if (!$arr) return emptyResult();
+        $res = json_decode(json_encode($arr), true);
+        $ids = '';
+        foreach ($res as $v) {
+            $ids .= $v['id'] . ',';
         }
-        $ids = substr($ids,0,strlen($ids)-1);
+        $ids = substr($ids, 0, strlen($ids) - 1);
 
-       //表示用户提问  医生编号为空，用户编号不为空
+        //表示用户提问  医生编号为空，用户编号不为空
 
-        $where1="visit_id in($ids) and doctor_code = ''";
+        $where1 = "visit_id in($ids) and doctor_code = ''";
 
         $line = Db::name('visit_line')->field('id,content')->where($where1)->order('create_time')->group('user_code')->select();
-        if($line){
+        if ($line) {
             return success($line);
-        }else{
+        } else {
             return emptyResult();
         }
 
@@ -321,25 +407,26 @@ class Doctor extends Controller
     /**
      * 查看某个问题的详情
      */
-    public function questionDetail(){
+    public function questionDetail()
+    {
         //问题id
         $id = input('id');
         //验证字段
         $result = $this->validate(
             [
-                'id'  => input('id'),
+                'id' => input('id'),
             ],
             [
-                'id'  => 'require',
+                'id' => 'require',
 
             ],
             [
-                'id.require'  =>  '问题id必须'
+                'id.require' => '问题id必须'
 
             ]
         );
 
-        if(true !== $result){
+        if (true !== $result) {
             // 验证失败 输出错误信息
             return failMsg($result);
         }
@@ -348,9 +435,9 @@ class Doctor extends Controller
         $visit = new VisitLine();
         $res = $visit->where($where)->order('create_time')->select();
 
-        if($res){
+        if ($res) {
             return success($res);
-        }else{
+        } else {
             return emptyResult();
         }
     }

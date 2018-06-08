@@ -258,6 +258,7 @@ class Doctorcenter extends Controller
         $data['content'] = input('content');
         $data['doctor_code'] = $doctor_code;
         $data['visit_id'] = $id;
+        $data['img'] = input('img');
 
         //验证字段
         $result = $this->validate(
@@ -286,11 +287,22 @@ class Doctorcenter extends Controller
             return failMsg($result);
         }
 
-        $re = $model->save($data);
-        if ($re){
+        Db::startTrans();
+        try {
+            $re = $model->save($data);
+            if (!$re) return failMsg('操作失败');
+
+            //修改问诊表里面的状态及最后一次回复时间
+            $visit = new Visit();
+            $v = $visit->save(['status' => 'A', 'reply_dt_last' => date("Y-m-d H:i:s")], ['id' => $id]);
+            if (!$v) return failMsg('操作失败');
+
+            Db::commit();
+
             return success();
-        }else{
-            return failMsg('操作失败');
+        } catch (\Exception $e) {
+            Db::rollback();
+            return failMsg($e->getMessage());
         }
 
 
