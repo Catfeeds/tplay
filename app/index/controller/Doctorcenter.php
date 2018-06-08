@@ -434,12 +434,12 @@ class Doctorcenter extends Controller
      */
 
     public function  withdrawList(){
-        $user_id = Session::get('user_id');
+        $user_id = $_SERVER['HTTP_USER_ID'];;
         //检查是否已登录
         if(!$user_id){
             return failLogin("您还未登录");
         }
-        $where['doctor_code'] = Session::get('doctor_code');
+        $where['doctor_code'] = $_SERVER['HTTP_CODE'];
         $model = new paymentLineModel();
         $res = $model->where($where)->select();
         if ($res) {
@@ -456,14 +456,14 @@ class Doctorcenter extends Controller
      */
     public function code()
     {
-        $user_id = Session::get('user_id');
+        $user_id = $_SERVER['HTTP_USER_ID'];;
         //检查是否已登录
         if(!$user_id){
             return failLogin("您还未登录");
         }
 
         $model = new doctorModel();
-        $where['code'] = Session::get('doctor_code');
+        $where['code'] = $_SERVER['HTTP_CODE'];
         $res = $model->field('aq_path,aq_path_dt,aq_path_url,gzh_qr_path')->where($where)->find()->toArray();
 
         if ($res) {
@@ -480,7 +480,7 @@ class Doctorcenter extends Controller
 
     public function createCode()
     {
-        $user_id = Session::get('user_id');
+        $user_id = $_SERVER['HTTP_USER_ID'];;
         //检查是否已登录
         if(!$user_id){
             return failLogin("您还未登录");
@@ -546,12 +546,12 @@ class Doctorcenter extends Controller
      * 服务定价
      */
     public function  setPrice(){
-        $user_id = Session::get('user_id');
+        $user_id = $_SERVER['HTTP_USER_ID'];;
         //检查是否已登录
         if(!$user_id){
             return failLogin("您还未登录");
         }
-        $doctor_code = Session::get('doctor_code');
+        $doctor_code = $_SERVER['HTTP_CODE'];
 
         $post_data['original_price'] =input('price');
         $result = $this->validate(
