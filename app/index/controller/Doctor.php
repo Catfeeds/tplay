@@ -154,6 +154,7 @@ class Doctor extends Controller
         $data['doctor_code'] = input('doctor_code');
         $data['origianl_price'] = input('origianl_price');
         $data['actual_pay'] = input('actual_pay');
+        $data['inquiry_dt_last'] = date('Y-m-d H:i:s');
         $post_data['content'] = input('content');
 
 
@@ -201,6 +202,7 @@ class Doctor extends Controller
             } else {
 
                 $re = $visit->save($data);
+
                 $visit_id = $visit->getLastInsID();
             }
 
@@ -215,6 +217,7 @@ class Doctor extends Controller
 
             $visit_line = new VisitLine();
             $re_line = $visit_line->save($post_data);
+
             if (!$re_line) return failMsg('操作失败');
 
             //首次提问  向账户表插入一条收入记录
