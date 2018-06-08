@@ -400,6 +400,9 @@ class Membercenter extends Controller
 
         if($res){
             return success($res);
+        }else{
+            $res = [];
+            return success($res);
         }
 
     }
