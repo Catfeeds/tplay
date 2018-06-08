@@ -123,10 +123,11 @@ class Index extends Controller
         $res_wx = send_url_d(['code'=>$code]);
         $res_wx = json_decode($res_wx,true);
 
-        /*if(isset($res_wx['errcode'])){
+        if(isset($res_wx['errcode'])){
+
             if($res_wx['errcode']=='40029')
-            return failMsg('code失效');
-        }*/
+            return failMsg('code失效'.$res_wx['errcode']);
+        }
         $post_data['open_id_dt'] = $res_wx['openid'];
         $post_data['union_id'] = $res_wx['session_key'];
 
