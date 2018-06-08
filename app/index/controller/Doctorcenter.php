@@ -326,7 +326,7 @@ class Doctorcenter extends Controller
         $model = new accountModel();
         $sum = $model->where($where)->sum('amount');
         if ($sum) {
-            $re['amount'] = $sum;
+            $re['amount'] = number_format($sum,2);
             return success($re);
         } else {
             $re['amount'] = '0.00';
@@ -350,7 +350,7 @@ class Doctorcenter extends Controller
         $where['type'] = 'DT';
         $where['code'] = $doctor_code;
         $model = new accountModel();
-        $re = $model->field('id,order_code,amount,create_time')->where($where)->select();
+        $re = $model->field('id,order_code,amount,create_time')->where($where)->order('create_time desc')->select();
         if ($re) {
             return success($re);
         } else {
