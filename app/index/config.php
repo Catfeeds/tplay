@@ -3,9 +3,9 @@
 return [
     //微信小程序配置
     'C_APPID'=>'wx673130f7d311c3ab',
-    'C_APPSECRET'=>'862d2d3859fe8708daf1781417169a93',
+    'C_APPSECRET'=>'b5cf9c5733bd2e7069d3c60b79281611',
     'D_APPID'=>'wxfbab320d3483b3b4',
-    'D_APPSECRET'=>'055f2f3731b169ace5c102ce9543de5d',
+    'D_APPSECRET'=>'f3fc8be6a3f55480837431710f35d04b',
     'TRANSA_PREFIX'=>'',
     'upload_url'=>'uploads/'
 ];
