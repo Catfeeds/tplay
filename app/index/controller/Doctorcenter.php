@@ -42,10 +42,34 @@ class Doctorcenter extends Controller
 
 
         $model = new doctorModel;
-        $res =$model->field('name,head_img,title,job_period,info,auth_type,hospital_code,department_code')->where($where)->select();
-        if($res){
-            return success($res);
-        }else{
+        $doctor =$model->where($where)->select();
+        if ($doctor) {
+            foreach ($doctor as $k => $v) {
+                $doctor[$k]['head_img'] = geturl($v['head_img']);
+                $doctor[$k]['head_img'] = str_replace("\\", "/", $doctor[$k]['head_img']);
+
+                //总计多少个回答
+                $visit = new Visit();
+                $ww['doctor_code'] = $v['code'];
+                $doctor[$k]['count'] = $visit->where($ww)->count();
+                //平均响应多少分钟
+                //SELECT TIMESTAMPDIFF(MINUTE,REPLY_DT,INQUIRY_DT) from me_visit
+                $sql = "SELECT TIMESTAMPDIFF(MINUTE,INQUIRY_DT,REPLY_DT) as minute from me_visit where doctor_code = " . $v['code'];
+                $res = Db::query($sql);
+                if ($res) {
+                    $sum = 0;
+                    foreach ($res as $vv) {
+                        $sum += $vv['minute'];
+                    }
+
+                    $doctor[$k]['minute'] = $sum / $doctor[$k]['count'];
+                } else {
+                    $doctor[$k]['minute'] = 0;
+                }
+            }
+
+            return success($doctor);
+        } else {
             return emptyResult();
         }
 
@@ -129,7 +153,7 @@ class Doctorcenter extends Controller
     /**
      * 查看某个问题的详情
      */
-    public function questionDetail(){
+    public function detail(){
         //检查是否已登录
         $doctor_code = $_SERVER['HTTP_CODE'];
         if(!$doctor_code){
@@ -193,7 +217,7 @@ class Doctorcenter extends Controller
     /**
      * 查看某个问题的详情列表
      */
-    public function questionDetailList(){
+    public function detailList(){
         //检查是否已登录
         $doctor_code = $_SERVER['HTTP_CODE'];
         if(!$doctor_code){
