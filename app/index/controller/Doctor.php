@@ -399,6 +399,9 @@ class Doctor extends Controller
         $where1 = "visit_id in($ids) and doctor_code = ''";
 
         $line = Db::name('visit_line')->field('id,content,create_time')->where($where1)->order('create_time')->group('user_code')->select();
+        foreach ($line as $k2=>$v2){
+            $line[$k2]['create_time'] = date("Y-m-d H:i:s",$v2['create_time']);
+        }
         if ($line) {
             return success($line);
         } else {
