@@ -127,6 +127,11 @@
             <div class="layui-input-block" style="max-width: 600px">
                 <textarea  class="layui-textarea" readonly>{$vo.content}</textarea>
             </div>
+            <div class="layui-input-block" style="max-width: 600px">
+                {volist name="vo['pics']" id="vo1"}
+                <a href="{$vo1}"> <img src="{$vo1}" width="50" height="50"></a>
+                {/volist}
+            </div>
             {/if}
 
         </div>

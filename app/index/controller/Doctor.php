@@ -337,7 +337,7 @@ class Doctor extends Controller
             $data['filesize'] = $info->getSize();//文件大小
             $data['create_time'] = time();//时间
             $data['uploadip'] = $this->request->ip();//IP
-            $data['user_id'] = Session::has('admin') ? Session::get('admin') : 0;
+            $data['user_id'] = $_SERVER['HTTP_USER_ID'];
             if ($data['module'] = 'index') {
                 //通过后台上传的文件直接审核通过
                 $data['status'] = 1;

@@ -72,8 +72,23 @@ class Inquisition extends Permissions
     public function detail(){
         $id = $this->request->has('id') ? $this->request->param('id', 0, 'intval') : 0;
         $where['visit_id'] = $id;
+        //问题列表  查询附件
         $visit = new VisitLine();
         $res = $visit->where($where)->order('create_time')->select();
+        if($res){
+            foreach ($res as $k=>$value){
+                if($value['img']!=null){
+                    $ids = explode(',',$value['img']);
+                    $res[$k]['pics'] = '';
+                    foreach ($ids as $k1=>$v1){
+                        $res[$k]['pics'] .= geturl($v1).',';
+                    }
+                    $res[$k]['pics'] = substr($res[$k]['pics'],0,-1);
+                    $res[$k]['pics'] = explode(',',$res[$k]['pics']);
+                }
+
+            }
+        }
 
         $v = new Visit();
         $x = $v->find($id);
