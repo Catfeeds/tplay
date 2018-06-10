@@ -351,7 +351,7 @@ class Doctor extends Controller
             return success($res);
         } else {
             // 上传失败获取错误信息
-            return failMsg('上传失败');
+            return failMsg('上传失败'.$file->getError());
             //return $this->error('上传失败：'.$file->getError());
         }
     }
