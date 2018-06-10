@@ -56,7 +56,7 @@ class Doctor extends Controller
                         $sum += $vv['minute'];
                     }
 
-                    $doctor[$k]['minute'] = $sum / $doctor[$k]['count'];
+                    $doctor[$k]['minute'] = intval($sum / $doctor[$k]['count']);
                 } else {
                     $doctor[$k]['minute'] = 0;
                 }
@@ -114,7 +114,7 @@ class Doctor extends Controller
                         $sum += $vv['minute'];
                     }
 
-                    $doctor[$k]['minute'] = $sum / $doctor[$k]['count'];
+                    $doctor[$k]['minute'] = intval($sum / $doctor[$k]['count']);
                 } else {
                     $doctor[$k]['minute'] = 0;
                 }
