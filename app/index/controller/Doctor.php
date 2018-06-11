@@ -193,7 +193,7 @@ class Doctor extends Controller
             //检查是否存在
             $where['user_code'] = $data['user_code'];
             $where['doctor_code'] = $data['doctor_code'];
-            $info = $visit->field('id')->where($where)->find();
+            /*$info = $visit->field('id')->where($where)->find();
 
             if ($info['id']) {
                 $visit_id = $info['id'];
@@ -204,7 +204,11 @@ class Doctor extends Controller
                 $re = $visit->save($data);
 
                 $visit_id = $visit->getLastInsID();
-            }
+            }*/
+
+            $re = $visit->save($data);
+
+            $visit_id = $visit->getLastInsID();
 
 
             if (!$re) return failMsg('操作失败');
