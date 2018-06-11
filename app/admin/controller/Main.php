@@ -53,7 +53,7 @@ class Main extends Permissions
         $web['message_num'] = Db::name('feedback')->count();
         $web['status_answer'] = Db::name('visit')->where(['status'=>'p'])->count();
         $web['status_withdraw'] = Db::name('wx_payment_line')->where('status','P')->count();
-        $web['look_message'] = Db::name('messages')->where('status','P')->count();
+        $web['look_message'] = Db::name('feedback')->where('status','P')->count();
 
         $web['admin_cate'] = Db::name('admin_cate')->count();
         $ip_ban = Db::name('webconfig')->value('black_ip');
