@@ -195,10 +195,24 @@ class Doctorcenter extends Controller
         $where['visit_id'] = $id;
         $visit = new VisitLine();
         $res = $visit->where($where)->order('create_time desc')->limit(0,1)->select();
+        //查看问题附件
+        if($res){
+            foreach ($res as $k=>$value){
+                if($value['img']!=null){
+                    $ids = explode(',',$value['img']);
+                    $res[$k]['pics'] = '';
+                    foreach ($ids as $k1=>$v1){
+                        $res[$k]['pics'] .= geturl($v1).',';
+                    }
+                    $res[$k]['pics'] = substr($res[$k]['pics'],0,-1);
+                    $res[$k]['pics'] = explode(',',$res[$k]['pics']);
+                }
+
+            }
+        }
         $data['user'] = $res1;
         $data['list'] = $res;
-        //查看问题附件
-        $data['pics'] ='';
+
         //查看状态和支付金额
         $v = new Visit();
         $data['other'] = $v->field('status,origianl_price,actual_pay')->find($id);
@@ -250,6 +264,20 @@ class Doctorcenter extends Controller
         $where['visit_id'] = $id;
         $visit = new VisitLine();
         $res = $visit->where($where)->order('create_time')->select();
+        if($res){
+            foreach ($res as $k=>$value){
+                if($value['img']!=null){
+                    $ids = explode(',',$value['img']);
+                    $res[$k]['pics'] = '';
+                    foreach ($ids as $k1=>$v1){
+                        $res[$k]['pics'] .= geturl($v1).',';
+                    }
+                    $res[$k]['pics'] = substr($res[$k]['pics'],0,-1);
+                    $res[$k]['pics'] = explode(',',$res[$k]['pics']);
+                }
+
+            }
+        }
 
         if($res){
             return success($res);
