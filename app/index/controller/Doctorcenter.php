@@ -392,6 +392,28 @@ class Doctorcenter extends Controller
     }
 
     /**
+     * 关闭问题
+     */
+    public function  close(){
+        //检查是否已登录
+        $doctor_code = $_SERVER['HTTP_CODE'];
+        if(!$doctor_code){
+            return failLogin("您还未登录");
+        }
+
+        //问诊id  visit_id
+        $id = input('visit_id');
+        $model = new Visit();
+        $re = $model->save(['status'=>'C','close_dt'=>date('Y-m-d H:i:s')],['id'=>$id]);
+
+        if ($re) {
+            return success();
+        } else {
+            return failMsg('操作失败');
+        }
+
+    }
+    /**
      * 收入统计
      */
     public function income()

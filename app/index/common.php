@@ -436,7 +436,7 @@ function curl_data($url,$data=[],$timeout=30,$useCert=[])
 }
 
 function isImage($filename){
-    $types = '.gif|.jpeg|.png|.bmp';//定义检查的图片类型
+    $types = '.gif|.jpeg|.jpg|.png|.bmp';//定义检查的图片类型
     if(file_exists($filename)){
         $info = getimagesize($filename);
         $ext = image_type_to_extension($info['2']);
