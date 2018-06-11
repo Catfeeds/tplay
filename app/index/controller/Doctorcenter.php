@@ -201,11 +201,27 @@ class Doctorcenter extends Controller
                 if($value['img']!=null){
                     $ids = explode(',',$value['img']);
                     $res[$k]['pics'] = '';
+                    $res[$k]['vids'] = '';
                     foreach ($ids as $k1=>$v1){
-                        $res[$k]['pics'] .= geturl($v1).',';
+                        if(isImage(geturl($v1))!==false){
+                            $res[$k]['pics'] .= geturl($v1).',';
+                        }else{
+                            $res[$k]['vids'] .= geturl($v1).',';
+                        }
+
+
                     }
-                    $res[$k]['pics'] = substr($res[$k]['pics'],0,-1);
-                    $res[$k]['pics'] = str_replace('\\','/',explode(',',$res[$k]['pics']));
+                    if($res[$k]['pics']){
+                        $res[$k]['pics'] = substr($res[$k]['pics'],0,-1);
+                        $res[$k]['pics'] = str_replace('\\','/',explode(',',$res[$k]['pics']));
+                    }
+
+                    if($res[$k]['vids']){
+                        $res[$k]['vids'] = substr($res[$k]['vids'],0,-1);
+                        $res[$k]['vids'] = str_replace('\\','/',explode(',',$res[$k]['vids']));
+
+                    }
+
                 }
 
             }
@@ -269,11 +285,28 @@ class Doctorcenter extends Controller
                 if($value['img']!=null){
                     $ids = explode(',',$value['img']);
                     $res[$k]['pics'] = '';
+                    $res[$k]['vids'] = '';
                     foreach ($ids as $k1=>$v1){
-                        $res[$k]['pics'] .= geturl($v1).',';
+                        if(isImage(geturl($v1))!==false){
+                            $res[$k]['pics'] .= geturl($v1).',';
+                        }else{
+                            $res[$k]['vids'] .= geturl($v1).',';
+                        }
+
+
                     }
-                    $res[$k]['pics'] = substr($res[$k]['pics'],0,-1);
-                    $res[$k]['pics'] = str_replace('\\','/',explode(',',$res[$k]['pics']));
+                    if($res[$k]['pics']){
+                        $res[$k]['pics'] = substr($res[$k]['pics'],0,-1);
+                        $res[$k]['pics'] = str_replace('\\','/',explode(',',$res[$k]['pics']));
+                    }
+
+                    if($res[$k]['vids']){
+                        $res[$k]['vids'] = substr($res[$k]['vids'],0,-1);
+                        $res[$k]['vids'] = str_replace('\\','/',explode(',',$res[$k]['vids']));
+
+                    }
+
+
                 }
 
             }

@@ -156,19 +156,16 @@ class Membercenter extends Controller
         //验证字段
         $result = $this->validate(
             [
-                'user_code'  => $data['user_code'],
                 'visit_id' => $data['visit_id'],
                 'content' => $data['content']
 
             ],
             [
-                'user_code'  => 'require',
                 'visit_id'=>'require',
                 'content' => 'require'
 
             ],
             [
-                'user_code.require'  =>  '用户编号必须',
                 'visit_id.require' =>'问诊id必须',
                 'content.require' =>'内容必须'
 
