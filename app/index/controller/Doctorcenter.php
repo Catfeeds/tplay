@@ -315,19 +315,16 @@ class Doctorcenter extends Controller
         //验证字段
         $result = $this->validate(
             [
-                'doctor_code'  => $data['doctor_code'],
                 'visit_id' => $data['visit_id'],
                 'content' => $data['content']
 
             ],
             [
-                'doctor_code'  => 'require',
                 'visit_id'=>'require',
                 'content' => 'require'
 
             ],
             [
-                'doctor_code.require'  =>  '医生编号必须',
                 'visit_id.require' =>'问诊id必须',
                 'content.require' =>'内容必须'
 
