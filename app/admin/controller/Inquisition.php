@@ -85,6 +85,8 @@ class Inquisition extends Permissions
                     }
                     $res[$k]['pics'] = substr($res[$k]['pics'],0,-1);
                     $res[$k]['pics'] = explode(',',$res[$k]['pics']);
+                }else{
+                    $res[$k]['pics'] = [];
                 }
 
             }
