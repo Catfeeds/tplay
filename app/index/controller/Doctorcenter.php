@@ -321,13 +321,13 @@ class Doctorcenter extends Controller
 
             ],
             [
-                'user_code'  => 'require',
+                'doctor_code'  => 'require',
                 'visit_id'=>'require',
                 'content' => 'require'
 
             ],
             [
-                'user_code.require'  =>  '医生编号必须',
+                'doctor_code.require'  =>  '医生编号必须',
                 'visit_id.require' =>'问诊id必须',
                 'content.require' =>'内容必须'
 
