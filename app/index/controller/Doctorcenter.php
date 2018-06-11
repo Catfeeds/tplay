@@ -205,7 +205,7 @@ class Doctorcenter extends Controller
                         $res[$k]['pics'] .= geturl($v1).',';
                     }
                     $res[$k]['pics'] = substr($res[$k]['pics'],0,-1);
-                    $res[$k]['pics'] = explode(',',$res[$k]['pics']);
+                    $res[$k]['pics'] = str_replace('\\','/',explode(',',$res[$k]['pics']));
                 }
 
             }
@@ -273,7 +273,7 @@ class Doctorcenter extends Controller
                         $res[$k]['pics'] .= geturl($v1).',';
                     }
                     $res[$k]['pics'] = substr($res[$k]['pics'],0,-1);
-                    $res[$k]['pics'] = explode(',',$res[$k]['pics']);
+                    $res[$k]['pics'] = str_replace('\\','/',explode(',',$res[$k]['pics']));
                 }
 
             }
