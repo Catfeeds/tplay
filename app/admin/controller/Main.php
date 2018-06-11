@@ -20,7 +20,7 @@ class Main extends Permissions
     public function index()
     {
         //tplay版本号
-        $info['tplay'] = TPLAY_VERSION;
+        $info['minebuty'] = TPLAY_VERSION;
         //tp版本号
         $info['tp'] = THINK_VERSION;
         //php版本
@@ -49,18 +49,23 @@ class Main extends Permissions
          *网站信息
          */
         $web['user_num'] = Db::name('admin')->count();
+        $web['doctor_num'] = Db::name('doctor')->count();
+        $web['message_num'] = Db::name('feedback')->count();
+        $web['status_answer'] = Db::name('visit')->where(['status'=>'p'])->count();
+        $web['status_withdraw'] = Db::name('wx_payment_line')->where('status','P')->count();
+        $web['look_message'] = Db::name('messages')->where('status','P')->count();
+
         $web['admin_cate'] = Db::name('admin_cate')->count();
         $ip_ban = Db::name('webconfig')->value('black_ip');
         $web['ip_ban'] = empty($ip_ban) ? 0 : count(explode(',',$ip_ban));
-        
-        $web['article_num'] = Db::name('article')->count();
-        $web['status_article'] = Db::name('article')->where('status',0)->count();
+
+
         $web['top_article'] = Db::name('article')->where('is_top',1)->count();
         $web['file_num'] = Db::name('attachment')->count();
-        $web['status_file'] = Db::name('attachment')->where('status',0)->count();
+
         $web['ref_file'] = Db::name('attachment')->where('status',-1)->count();
-        $web['message_num'] = Db::name('messages')->count();
-        $web['look_message'] = Db::name('messages')->where('is_look',0)->count();
+
+
 
 
         //登陆次数和下载次数
