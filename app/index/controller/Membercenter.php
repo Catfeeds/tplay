@@ -87,8 +87,8 @@ class Membercenter extends Controller
             $res[$k]['head_img'] = str_replace("\\", "/", $res[$k]['head_img']);
         }
         //统计未回答和已回答的条数
-        $res['pedding'] = $model->where(['status'=>'P'])->count();
-        $res['anserwed']= $model->where(['status'=>'A'])->count();
+        $res['pedding'] = $model->where(['status'=>'P','user_code'=> $_SERVER['HTTP_CODE']])->count();
+        $res['anserwed']= $model->where(['status'=>'A','user_code'=> $_SERVER['HTTP_CODE']])->count();
 
         if($res){
             return success($res);
