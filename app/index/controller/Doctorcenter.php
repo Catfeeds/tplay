@@ -203,6 +203,8 @@ class Doctorcenter extends Controller
                     $res[$k]['pics'] = '';
                     $res[$k]['vids'] = '';
                     foreach ($ids as $k1=>$v1){
+                        var_dump(isImage(geturl($v1)));
+                        echo geturl($v1);
                         if(isImage(geturl($v1))){
                             $res[$k]['pics'] .= geturl($v1).',';
                         }else{
