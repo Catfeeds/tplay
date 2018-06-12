@@ -130,11 +130,44 @@ class Membercenter extends Controller
             return failMsg($result);
         }
 
-        $where['user_code'] = $_SERVER['HTTP_CODE'];
-
         $model = new VisitLine();
-        $res = $model->where($where)->select();
+        $res = $model->where($where)->order('create_time')->select();
         if($res){
+            //查看问题附件
+            if($res){
+                foreach ($res as $k=>$value){
+                    if($value['img']!=null){
+                        $ids = explode(',',$value['img']);
+                        $res[$k]['pics'] = '';
+                        $res[$k]['vids'] = '';
+                        foreach ($ids as $k1=>$v1){
+
+                            if(isImage(geturl($v1))){
+                                $res[$k]['pics'] .= geturl($v1).',';
+                            }else{
+                                $res[$k]['vids'] .= geturl($v1).',';
+                            }
+
+
+                        }
+
+                        if($res[$k]['pics']){
+                            $res[$k]['pics'] = substr($res[$k]['pics'],0,-1);
+                            $res[$k]['pics'] = str_replace('\\','/',explode(',',$res[$k]['pics']));
+                        }
+
+                        if($res[$k]['vids']){
+                            $res[$k]['vids'] = substr($res[$k]['vids'],0,-1);
+                            $res[$k]['vids'] = str_replace('\\','/',explode(',',$res[$k]['vids']));
+
+                        }
+
+                    }
+
+                }
+            }
+
+
             return success($res);
         }else{
             return emptyResult();
