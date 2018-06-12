@@ -211,6 +211,10 @@ class Doctorcenter extends Controller
 
 
                     }
+
+                    var_dump($res);
+                    exit;
+
                     if($res[$k]['pics']){
                         $res[$k]['pics'] = substr($res[$k]['pics'],0,-1);
                         $res[$k]['pics'] = str_replace('\\','/',explode(',',$res[$k]['pics']));
