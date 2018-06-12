@@ -378,7 +378,14 @@ class Doctorcenter extends Controller
 
             //修改问诊表里面的状态及最后一次回复时间
             $visit = new Visit();
-            $v = $visit->save(['status' => 'A', 'reply_dt_last' => date("Y-m-d H:i:s")], ['id' => $id]);
+            $reply_dt = $visit->field('reply_dt')->find($id);
+            if($reply_dt){
+                $v = $visit->save(['status' => 'A', 'reply_dt_last' => date("Y-m-d H:i:s")], ['id' => $id]);
+
+            }else{
+                $v = $visit->save(['status' => 'A', 'reply_dt'=>date("Y-m-d H:i:s"),'reply_dt_last' => date("Y-m-d H:i:s")], ['id' => $id]);
+            }
+
             if (!$v) return failMsg('操作失败');
 
             Db::commit();
@@ -405,6 +412,17 @@ class Doctorcenter extends Controller
 
         //问诊id  visit_id
         $id = input('visit_id');
+
+        //验证字段
+        $result = $this->validate(
+            ['id' => $id,], ['id'=>'require',], ['id.require' =>'问诊id必须',]
+        );
+
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
+
         $model = new Visit();
         $re = $model->save(['status'=>'C','close_dt'=>date('Y-m-d H:i:s')],['id'=>$id]);
 

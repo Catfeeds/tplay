@@ -94,15 +94,10 @@ class Index extends Controller
             $last_id = $wx_user->getLastInsID();
         }
 
-        $session_user_info = md5($post_data['open_id_ur'].$last_id);
         $token = md5($post_data['open_id_ur'].$last_id.time().microtime());
 
         //设置登录信息
         $post_data['user_id'] = $last_id;
-        Session::set($token,$session_user_info);
-        Session::set($session_user_info,$post_data);
-        Session::set('user_id',$post_data['user_id']);
-        Session::set('user_code',$post_data['code']);
         $post_data['token'] = $token;
         return success($post_data);
 
@@ -186,14 +181,11 @@ class Index extends Controller
             $wx_user->save($post_data);
             $last_id = $wx_user->getLastInsID();
         }
-        $session_user_info = md5($post_data['open_id_dt'].$last_id);
+
         $token = md5($post_data['open_id_dt'].$last_id.time().microtime());
 
         //设置登录信息
         $post_data['user_id'] = $last_id;
-        Session::set($token,$session_user_info);
-        Session::set($session_user_info,$post_data);
-        Session::set('user_id',$post_data['user_id']);
         $post_data['token'] = $token;
 
         //查询该用户有没有doctor_code
@@ -206,9 +198,6 @@ class Index extends Controller
         }
 
         $post_data['code'] = $res ['code'];
-        Session::set('doctor_code',$res ['code']);
-        Session::set('openid',$post_data['open_id_dt']);
-
         return success($post_data);
 
     }

@@ -153,7 +153,7 @@ class Doctor extends Controller
         $data['user_code'] = $_SERVER['HTTP_CODE'];
         $data['doctor_code'] = input('doctor_code');
         $data['origianl_price'] = input('origianl_price');
-        $data['actual_pay'] = input('actual_pay');
+        $data['actual_pay'] = input('actual_pay','0.00');
         $data['inquiry_dt_last'] = date('Y-m-d H:i:s');
         $post_data['content'] = input('content');
 
@@ -193,24 +193,9 @@ class Doctor extends Controller
             //检查是否存在
             $where['user_code'] = $data['user_code'];
             $where['doctor_code'] = $data['doctor_code'];
-            /*$info = $visit->field('id')->where($where)->find();
-
-            if ($info['id']) {
-                $visit_id = $info['id'];
-                $re = $visit->save($data, ['id' => $info['id']]);
-
-            } else {
-
-                $re = $visit->save($data);
-
-                $visit_id = $visit->getLastInsID();
-            }*/
 
             $re = $visit->save($data);
-
             $visit_id = $visit->getLastInsID();
-
-
             if (!$re) return failMsg('操作失败');
 
 
@@ -221,7 +206,6 @@ class Doctor extends Controller
 
             $visit_line = new VisitLine();
             $re_line = $visit_line->save($post_data);
-
             if (!$re_line) return failMsg('操作失败');
 
             //首次提问  向账户表插入一条收入记录
@@ -321,6 +305,13 @@ class Doctor extends Controller
      */
     public function upload($module = 'index', $use = 'index_questions')
     {
+
+        //检查是否已登录
+        $user_id = $_SERVER['HTTP_USER_ID'];
+        if (!$user_id) {
+            return failLogin("您还未登录");
+        }
+
         if ($this->request->file('file')) {
             $file = $this->request->file('file');
         } else {
@@ -341,7 +332,7 @@ class Doctor extends Controller
             $data['filesize'] = $info->getSize();//文件大小
             $data['create_time'] = time();//时间
             $data['uploadip'] = $this->request->ip();//IP
-            $data['user_id'] = $_SERVER['HTTP_USER_ID'];
+            $data['user_id'] = $user_id;
             if ($data['module'] = 'index') {
                 //通过后台上传的文件直接审核通过
                 $data['status'] = 1;

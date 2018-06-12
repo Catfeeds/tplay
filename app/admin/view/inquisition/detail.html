@@ -131,7 +131,7 @@
             <div class="layui-input-block" style="max-width: 600px">
                 {if condition="$vo['pics'] neq null"}
                 {volist name="vo['pics']" id="vo1"}
-                <a href="{$vo1}"> <img src="{$vo1}" width="100" height="100" /> </a>
+                <a href="{$vo1}"> <img src="{$vo1}" width="100" height="100" style="vertical-align:none;"/> </a>
                 {/volist}
                 {/if}
                 {if condition="$vo['vids'] neq null"}
