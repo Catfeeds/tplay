@@ -83,6 +83,10 @@ class Membercenter extends Controller
             ->join('me_doctor','me_doctor.code= me_visit.doctor_code')
             ->where($where)->order('create_time desc')->select();
 
+        //统计未回答和已回答的条数
+        $res['pedding'] = $model->where(['status'=>'P'])->count();
+        $res['anserwed']= $model->where(['status'=>'A'])->count();
+
         if($res){
             return success($res);
         }else{
