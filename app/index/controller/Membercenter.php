@@ -82,16 +82,18 @@ class Membercenter extends Controller
         $res = $model->field('me_visit.*,me_doctor.head_img,me_doctor.name,me_doctor.title,me_doctor.phone')
             ->join('me_doctor','me_doctor.code= me_visit.doctor_code')
             ->where($where)->order('create_time desc')->select();
-        foreach ($res as $k => $v) {
-            $res[$k]['head_img'] = geturl($v['head_img']);
-            $res[$k]['head_img'] = str_replace("\\", "/", $res[$k]['head_img']);
-        }
-        //统计未回答和已回答的条数
-        $res['pedding'] = $model->where(['status'=>'P','user_code'=> $_SERVER['HTTP_CODE']])->count();
-        $res['anserwed']= $model->where(['status'=>'A','user_code'=> $_SERVER['HTTP_CODE']])->count();
 
         if($res){
-            return success($res);
+            foreach ($res as $k => $v) {
+                $res[$k]['head_img'] = geturl($v['head_img']);
+                $res[$k]['head_img'] = str_replace("\\", "/", $res[$k]['head_img']);
+            }
+            $re['list'] = $res;
+            //统计未回答和已回答的条数
+            $re['pedding'] = $model->where(['status'=>'P','user_code'=> $_SERVER['HTTP_CODE']])->count();
+            $re['anserwed']= $model->where(['status'=>'A','user_code'=> $_SERVER['HTTP_CODE']])->count();
+
+            return success($re);
         }else{
             return emptyResult();
         }
