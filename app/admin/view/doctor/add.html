@@ -131,7 +131,7 @@
                 <select name="user_id" lay-filter="aihao">
                     <option value="">请选择用户</option>
                     {volist name="user" id="vo"}
-                    <option value="{$vo.id}" {notempty name="$doctor.hospital_code"}{eq name="$doctor.hospital_code" value="$vo.id"} selected=""{/eq}{/notempty}>{$vo.name}</option>
+                    <option value="{$vo.id}" {notempty name="$userid"}{eq name="$userid" value="$vo.id"} selected=""{/eq}{/notempty}>{$vo.name}</option>
                     {/volist}
                 </select>
             </div>

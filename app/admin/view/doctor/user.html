@@ -27,10 +27,9 @@
     <div class="layui-tab">
         <ul class="layui-tab-title">
             <li class="layui-this">用户管理</li>
-            <!--<li><a href="{:url('admin/admin/publish')}" class="a_menu">新增管理员</a></li>-->
         </ul>
     </div>
-    <form class="layui-form serch" action="{:url('admin/customer/index')}" method="post">
+    <form class="layui-form serch" action="{:url('admin/doctor/user')}" method="post">
         <div class="layui-form-item" style="float: left;">
             <div class="layui-input-inline">
                 <input type="text" name="keywords" lay-verify="title" autocomplete="off" placeholder="请输入关键词" class="layui-input layui-btn-sm">
@@ -61,19 +60,17 @@
             <col width="200">
             <col width="200">
             <col width="200">
-            <col width="200">
         </colgroup>
         <thead>
         <tr>
             <th>ID</th>
+            <th>头像</th>
             <th>姓名</th>
             <th>性别</th>
-            <th>手机</th>
-            <th>身高</th>
-            <th>体重</th>
-            <th>年龄</th>
-            <th>有无过敏史</th>
+            <th>昵称</th>
             <th>创建时间</th>
+            <th>地址</th>
+            <th>手机</th>
             <th>操作</th>
         </tr>
         </thead>
@@ -81,22 +78,23 @@
         {volist name="user" id="vo"}
         <tr>
             <td>{$vo.id}</td>
+            <td><a href="{$vo.wx_head_img_url}" class="tooltip"><img src="{$vo.wx_head_img_url}" width="20" height="20"></a></td>
             <td>{$vo.name}</td>
             <td>
-                {if condition="$vo.sex eq 1 "} 女
-                {else /} 男
+                {if condition="$vo.wx_sex eq 1 "} 男
+                {else /} 女
                 {/if}
             </td>
-            <td>{$vo.phone}</td>
-            <td>{$vo.height}</td>
-            <td>{$vo.weight}</td>
-            <td>{$vo.age}</td>
-            <td>{$vo.is_allergy}</td>
+            <td>{$vo.wx_nick_name}</td>
             <td>{$vo.create_time}</td>
+            <td>{$vo.wx_country}-{$vo.wx_province}-{$vo.wx_city}</td>
+            <td>
+                {$vo.phone}
+            </td>
             <td class="operation-menu">
                 <div class="layui-btn-group">
-                    <a href="{:url('customer/userdetail',['id'=>$vo.id,'uid'=>$id])}" class="layui-btn layui-btn-xs a_menu layui-btn-primary" id="{$vo.id}" style="margin-right: 0;font-size:12px;">详情</a>
-                    <a href="{:url('inquisition/detail',['id'=>$vo.id])}" class="layui-btn layui-btn-xs a_menu layui-btn-primary" id="{$vo.id}" style="margin-right: 0;font-size:12px;">问诊记录</a>
+                    <a href="{:url('doctor/add',['id'=>$vo.id])}" class="layui-btn layui-btn-xs a_menu layui-btn-primary" id="{$vo.id}" style="margin-right: 0;font-size:12px;">添加为医生</a>
+
                     <a class="layui-btn layui-btn-xs layui-btn-primary delete" id="{$vo.id}" style="margin-right: 0;font-size:12px;">删除</a>
                 </div>
             </td>
@@ -104,7 +102,7 @@
         {/volist}
         </tbody>
     </table>
-    <div style="padding:0 20px;"></div>
+    <div style="padding:0 20px;">{$user->render()}</div>
 
     {include file="public/foot"}
 
@@ -114,7 +112,7 @@
             var id = $(this).attr('id');
             layer.confirm('确定要删除?', function(index) {
                 $.ajax({
-                    url:"{:url('admin/customer/userdelete')}",
+                    url:"{:url('admin/doctor/del')}",
                     data:{id:id},
                     success:function(res) {
                         layer.msg(res.msg);

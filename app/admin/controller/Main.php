@@ -48,7 +48,8 @@ class Main extends Permissions
         /**
          *网站信息
          */
-        $web['user_num'] = Db::name('user')->where(['code'=>'neq null'])->count();
+        $w['code'] = ['neq'=>'null'];
+        $web['user_num'] = Db::name('user')->where($w)->count();
         $web['doctor_num'] = Db::name('doctor')->count();
         $web['message_num'] = Db::name('feedback')->count();
         $web['status_answer'] = Db::name('visit')->where(['status'=>'p'])->count();

@@ -15,7 +15,7 @@ use app\admin\controller\Permissions;
 use \think\Cookie;
 use \think\Session;
 use \think\Cache;
-use app\admin\model\User;//管理员模型
+use app\admin\model\User;//用户模型
 
 class Customer extends Permissions
 {

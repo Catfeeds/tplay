@@ -17,6 +17,7 @@ use \think\Cookie;
 use \think\Session;
 use \think\Cache;
 use app\admin\model\Doctor as doctorModel;//医生模型
+use app\admin\model\User;//用户模型
 
 class Doctor extends Permissions
 {
@@ -119,7 +120,8 @@ class Doctor extends Permissions
                 }
 
             }
-
+            $id = input('id');
+            $this->assign('userid',$id);
             $this->assign('hospital',$hospital);
             $this->assign('user',$user);
             return $this->fetch();
@@ -206,5 +208,47 @@ class Doctor extends Permissions
         }
     }
 
+    /**
+     * 待审医生列表
+     */
 
+    public function  user(){
+        //实例化用户模型
+        $model = new User();
+        $where = ['status'=>'A'];
+        $where['code'] = ['eq',''];
+        $post = $this->request->param();
+        if (isset($post['keywords']) and !empty($post['keywords'])) {
+            $where['name'] = ['like', '%' . $post['keywords'] . '%'];
+        }
+
+        if(isset($post['create_time']) and !empty($post['create_time'])) {
+            $min_time = strtotime($post['create_time']);
+            $max_time = $min_time + 24 * 60 * 60;
+            $where['create_time'] = [['>=',$min_time],['<=',$max_time]];
+        }
+
+        $user = $model->where($where)->order('create_time desc')->paginate(20);
+
+        $this->assign('user',$user);
+        return $this->fetch();
+
+    }
+
+    /**
+     * 删除
+     */
+    public function del(){
+        if($this->request->isAjax()) {
+            $id = $this->request->has('id') ? $this->request->param('id', 0, 'intval') : 0;
+            $model = new User();
+            $data['status'] = 'D';
+            $r = $model ->save($data,['id'=>$id]);
+            if(false == $r) {
+                return $this->error('删除失败');
+            } else {
+                return $this->success('删除成功','admin/doctor/index');
+            }
+        }
+    }
 }
