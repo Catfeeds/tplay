@@ -79,7 +79,7 @@ class Membercenter extends Controller
             // 验证失败 输出错误信息
             return failMsg($result);
         }
-        $res = $model->field('me_visit.*,me_doctor.name,me_doctor.title,me_doctor.phone')
+        $res = $model->field('me_visit.*,me_doctor.head_img,me_doctor.name,me_doctor.title,me_doctor.phone')
             ->join('me_doctor','me_doctor.code= me_visit.doctor_code')
             ->where($where)->order('create_time desc')->select();
 
