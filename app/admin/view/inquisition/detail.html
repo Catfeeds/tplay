@@ -130,10 +130,18 @@
             {if condition="$vo['pics'] neq null"}
             <div class="layui-input-block" style="max-width: 600px">
                 {volist name="vo['pics']" id="vo1"}
-                <a href="{$vo1}"> <img src="{$vo1}" width="50" height="50"></a>
+                <a href="{$vo1}"> <img src="{$vo1}" width="50" height="50" /> </a>
                 {/volist}
             </div>
             {/if}
+            {if condition="$vo['vids'] neq null"}
+            <div class="layui-input-block" style="max-width: 600px">
+                {volist name="vo['vids']" id="vo2"}
+                <a href="{$vo2}">  <video src="{$vo2}" controls="controls" /> </a>
+                {/volist}
+            </div>
+            {/if}
+
             {/if}
 
         </div>

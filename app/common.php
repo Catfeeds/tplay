@@ -149,3 +149,8 @@ function hide_phone($str){
     $resstr = substr_replace($str,'****',3,4);  
     return $resstr;  
 }
+
+
+function isImage($url){
+    return preg_match('/.*(\.png|\.jpg|\.jpeg|\.gif)$/', $url);
+}

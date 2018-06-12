@@ -435,6 +435,3 @@ function curl_data($url,$data=[],$timeout=30,$useCert=[])
     return $handles;
 }
 
-function isImage($url){
-    return preg_match('/.*(\.png|\.jpg|\.jpeg|\.gif)$/', $url);
-}
