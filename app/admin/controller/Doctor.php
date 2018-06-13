@@ -229,6 +229,13 @@ class Doctor extends Permissions
         }
 
         $user = $model->where($where)->order('create_time desc')->paginate(20);
+        foreach ($user as $k=>$v){
+            $doctor = new doctorModel();
+            $re = $doctor->where(['user_id'=>$v['id']])->find();
+            if($re){
+                unset($user[$k]);
+            }
+        }
 
         $this->assign('user',$user);
         return $this->fetch();
