@@ -36,8 +36,14 @@ class Inquisition extends Permissions
             $max_time = $min_time + 24 * 60 * 60;
             $where['create_time'] = [['>=',$min_time],['<=',$max_time]];
         }
+        if(isset($post['usercode']) and !empty($post['usercode'])){
+            $where['user_code'] = $post['usercode'];
+        }
+        if(isset($post['doctorcode']) and !empty($post['doctorcode'])){
+            $where['doctor_code'] = $post['doctorcode'];
+        }
 
-        $inquisition = $model->field('me_visit.id,me_visit.status,me_visit.origianl_price,me_visit.actual_pay,me_visit.create_time,me_visit.inquiry_dt_last,me_visit.reply_dt,me_visit.reply_dt_last,me_user.name,me_doctor.name as doctor_name')
+        $inquisition = $model->field('me_visit.id,me_visit.doctor_code,me_visit.user_code,me_visit.status,me_visit.origianl_price,me_visit.actual_pay,me_visit.create_time,me_visit.inquiry_dt_last,me_visit.reply_dt,me_visit.reply_dt_last,me_user.name,me_doctor.name as doctor_name')
             ->join('me_user','me_user.code = me_visit.user_code')
             ->join('me_doctor','me_doctor.code = me_visit.doctor_code')
             ->where($where)
@@ -110,6 +116,17 @@ class Inquisition extends Permissions
 
         $v = new Visit();
         $x = $v->find($id);
+        //计算问题是否超时
+            //SELECT TIMESTAMPDIFF(MINUTE, INQUIRY_DT_LAST ,  IFNULL(REPLY_DT_LAST, NOW( )) ) from me_visit
+            $sql = "SELECT TIMESTAMPDIFF(MINUTE, INQUIRY_DT_LAST ,  IFNULL(REPLY_DT_LAST, NOW( )) ) as minute from me_visit where id = ".$id;
+            $rs = Db::query($sql);
+            if($rs[0]['minute']>0 && $rs[0]['minute']<=10){  //超时时间 10分钟
+                $x['is_overtime'] = 0;
+            }else{
+                $x['is_overtime']= 1;
+            }
+
+
         $d = new Doctor();
         $doctor = $d->where(['code'=>$x['doctor_code']])->find();
         $u = new User();
@@ -118,6 +135,7 @@ class Inquisition extends Permissions
         $this->assign('doctor',$doctor);//医生信息
         $this->assign('user',$user);//问诊人信息
         $this->assign('list',$res);//问题列表
+        $this->assign('x',$x);
         return $this->fetch();
     }
 
