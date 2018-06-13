@@ -110,6 +110,17 @@ class Inquisition extends Permissions
 
         $v = new Visit();
         $x = $v->find($id);
+        //计算问题是否超时
+            //SELECT TIMESTAMPDIFF(MINUTE, INQUIRY_DT_LAST ,  IFNULL(REPLY_DT_LAST, NOW( )) ) from me_visit
+            $sql = "SELECT TIMESTAMPDIFF(MINUTE, INQUIRY_DT_LAST ,  IFNULL(REPLY_DT_LAST, NOW( )) ) as minute from me_visit where id = ".$id;
+            $rs = Db::query($sql);
+            if($rs[0]['minute']>0 && $rs[0]['minute']<=10){  //超时时间 10分钟
+                $x['is_overtime'] = 0;
+            }else{
+                $x['is_overtime']= 1;
+            }
+
+
         $d = new Doctor();
         $doctor = $d->where(['code'=>$x['doctor_code']])->find();
         $u = new User();
@@ -118,6 +129,7 @@ class Inquisition extends Permissions
         $this->assign('doctor',$doctor);//医生信息
         $this->assign('user',$user);//问诊人信息
         $this->assign('list',$res);//问题列表
+        $this->assign('x',$x);
         return $this->fetch();
     }
 
