@@ -80,12 +80,12 @@
             <div class="layui-input-block" style="max-width: 600px;margin-top: 10px;">
                 {if condition="$vo['pics'] neq null"}
                 {volist name="vo['pics']" id="vo1"}
-                <a href="{$vo1}"> <img src="{$vo1}" width="100" height="100" style="vertical-align:inherit;"/> </a>
+                <a href="{$vo1}" target="_blank"> <img src="{$vo1}" width="60" height="60" style="vertical-align:inherit;"/> </a>
                 {/volist}
                 {/if}
                 {if condition="$vo['vids'] neq null"}
                 {volist name="vo['vids']" id="vo2"}
-                <a href="{$vo2}">  <video src="{$vo2}" controls="controls" style="width: 100px; height: 100px;"/> </a>
+                <a href="{$vo2}" target="_blank">  <video src="{$vo2}" controls="controls" style="width: 60px; height: 60px;"/> </a>
                 {/volist}
                 {/if}
             </div>
