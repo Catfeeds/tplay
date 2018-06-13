@@ -109,7 +109,7 @@
             <td class="operation-menu">
                 <div class="layui-btn-group">
                     <a href="{:url('doctor/update',['id'=>$vo.id])}" class="layui-btn layui-btn-xs a_menu layui-btn-primary" id="{$vo.id}" style="margin-right: 0;font-size:12px;">修改</a>
-                    <a href="" class="layui-btn layui-btn-xs a_menu layui-btn-primary" style="margin-right: 0;font-size:12px;" >接诊记录</a>
+                    <a href="{:url('inquisition/index,['doctor_code'=>$vo.code]')}" class="layui-btn layui-btn-xs a_menu layui-btn-primary" style="margin-right: 0;font-size:12px;" >接诊记录</a>
                     <a class="layui-btn layui-btn-xs layui-btn-primary delete" id="{$vo.id}" style="margin-right: 0;font-size:12px;">删除</a>
                 </div>
             </td>

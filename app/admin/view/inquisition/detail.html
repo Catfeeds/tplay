@@ -26,27 +26,22 @@
         </div>
 
         <div class="layui-form-item width" style="width: 800px;">
-            <label class="layui-form-label" style="text-align: left;">姓名:{$user.name}</label>
-            <label class="layui-form-label">年龄:{$user.age}</label>
-            <label class="layui-form-label">性别:
+            <label class="layui-form-label" style="text-align: left;width: 200px;">姓名:{$user.name}</label>
+            <label class="layui-form-label"  style="text-align: left;width: 200px;">年龄:{$user.age}</label>
+            <label class="layui-form-label"  style="text-align: left;width: 200px;">性别:
                 {if condition="$user.sex eq 1 "} 男
                 {else /} 女
                 {/if}
             </label>
-            <label class="layui-form-label" style="width: 200px;">手机号:{$user.phone}</label>
-            <label class="layui-form-label" style="width: 150px;">身高:{$user.height}cm</label>
-            <label class="layui-form-label" style="width: 150px;text-align: left;">体重:{$user.weight}kg</label>
-        </div>
-
-
-        <div class="layui-form-item">
-            <label class="layui-form-label" style="width: 100px;text-align: left;">有无过敏史:
+            <label class="layui-form-label"  style="text-align: left;width: 200px;">手机号:{$user.phone}</label>
+            <label class="layui-form-label"  style="text-align: left;width: 200px;">身高:{$user.height}cm</label>
+            <label class="layui-form-label"  style="text-align: left;width: 200px;">体重:{$user.weight}kg</label>
+            <label class="layui-form-label"  style="text-align: left;width: 200px;">有无过敏史:
                 {if condition="$user.is_allergy eq 'N' "} 无
                 {else /} 有
                 {/if}
             </label>
         </div>
-
 
         <div class="layui-form-item">
             <label class="layui-form-label" style="width: 100px;text-align: left;">病例、过往病史</label>
@@ -59,11 +54,11 @@
             <h3 style="border: 1px solid #009688;height: 40px;background: #009688;color: #fff;line-height: 40px;">接诊医生信息</h3>
         </div>
         <div class="layui-form-item width" style="width: 800px">
-            <label class="layui-form-label" style="width: 120px;text-align: left;">医生编号:{$doctor.code}</label>
-            <label class="layui-form-label" style="width: 200px;">姓名:{$doctor.name}</label>
-            <label class="layui-form-label" style="width: 200px;">职位:{$doctor.title}</label>
-            <label class="layui-form-label" style="width: 175px;text-align: left;">联系电话:{$doctor.phone}</label>
-            <label class="layui-form-label" style="width: 200px;">本次问诊费用:￥{$doctor.original_price}元</label>
+            <label class="layui-form-label" style="width: 200px;text-align: left;">医生编号:{$doctor.code}</label>
+            <label class="layui-form-label" style="width: 200px;text-align: left;">姓名:{$doctor.name}</label>
+            <label class="layui-form-label" style="width: 200px;text-align: left;">职位:{$doctor.title}</label>
+            <label class="layui-form-label" style="width: 200px;text-align: left;">联系电话:{$doctor.phone}</label>
+            <label class="layui-form-label" style="width: 200px;text-align: left;">本次问诊费用:￥{$doctor.original_price}元</label>
         </div>
 
         <div class="layui-form-item" style="width:815px;text-align: center;">
