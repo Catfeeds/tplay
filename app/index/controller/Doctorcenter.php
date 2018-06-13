@@ -54,7 +54,7 @@ class Doctorcenter extends Controller
                 $doctor[$k]['count'] = $visit->where($ww)->count();
                 //平均响应多少分钟
                 //SELECT TIMESTAMPDIFF(MINUTE,REPLY_DT,INQUIRY_DT) from me_visit
-                $sql = "SELECT TIMESTAMPDIFF(MINUTE,INQUIRY_DT,REPLY_DT) as minute from me_visit where doctor_code = " . $v['code'];
+                $sql = "SELECT TIMESTAMPDIFF(MINUTE,INQUIRY_DT,REPLY_DT) as minute from me_visit where doctor_code = '" . $v['code']."'";
                 $res = Db::query($sql);
                 if ($res) {
                     $sum = 0;
@@ -149,6 +149,25 @@ class Doctorcenter extends Controller
 
 
     }
+    /**
+     * 接诊数量统计
+     *
+     */
+    public function count(){
+        //检查是否已登录
+        $doctor_code = $_SERVER['HTTP_CODE'];
+        if(!$doctor_code){
+            return failLogin("您还未登录");
+        }
+
+        $model = new visitModel();
+        $res['pedding'] = $model->where(['status'=>'P','doctor_code'=>$doctor_code])->count();
+        $res['anserwed'] = $model->where(['status'=>'A','doctor_code'=>$doctor_code])->count();
+        $res['closed'] = $model->where(['status'=>'C','doctor_code'=>$doctor_code])->count();
+        return success($res);
+
+    }
+
 
     /**
      * 查看某个问题的详情
