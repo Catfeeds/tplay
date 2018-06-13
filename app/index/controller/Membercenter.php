@@ -335,7 +335,7 @@ class Membercenter extends Controller
     {
         $user_id = $_SERVER['HTTP_USER_ID'];
         //检查是否已登录
-        if(!$user_id){
+        if(!$user_id||!$_SERVER['HTTP_CODE']){
             return failLogin("您还未登录");
         }
 
@@ -383,11 +383,10 @@ class Membercenter extends Controller
     {
         $user_id = $_SERVER['HTTP_USER_ID'];
         //检查是否已登录
-        if(!$user_id){
+        if(!$user_id||!$_SERVER['HTTP_CODE']){
             return failLogin("您还未登录");
         }
 
-        //$data['user_code'] = Session::get('user_code');
         $data['user_code'] = $_SERVER['HTTP_CODE'];
 
         $data['content'] = input('content');
