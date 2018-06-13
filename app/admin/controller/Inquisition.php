@@ -36,11 +36,11 @@ class Inquisition extends Permissions
             $max_time = $min_time + 24 * 60 * 60;
             $where['create_time'] = [['>=',$min_time],['<=',$max_time]];
         }
-        if(isset($post['user_code']) and !empty($post['user_code'])){
-            $where['user_code'] = $post['user_code'];
+        if(isset($post['usercode']) and !empty($post['usercode'])){
+            $where['user_code'] = $post['usercode'];
         }
-        if(isset($post['doctor_code']) and !empty($post['doctor_code'])){
-            $where['doctor_code'] = $post['doctor_code'];
+        if(isset($post['doctorcode']) and !empty($post['doctorcode'])){
+            $where['doctor_code'] = $post['doctorcode'];
         }
 
         $inquisition = $model->field('me_visit.id,me_visit.doctor_code,me_visit.user_code,me_visit.status,me_visit.origianl_price,me_visit.actual_pay,me_visit.create_time,me_visit.inquiry_dt_last,me_visit.reply_dt,me_visit.reply_dt_last,me_user.name,me_doctor.name as doctor_name')
