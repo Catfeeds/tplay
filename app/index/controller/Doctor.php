@@ -48,7 +48,7 @@ class Doctor extends Controller
 
                 //平均响应多少分钟
                 //SELECT TIMESTAMPDIFF(MINUTE,REPLY_DT,INQUIRY_DT) from me_visit
-                $sql = "SELECT TIMESTAMPDIFF(MINUTE,INQUIRY_DT,REPLY_DT) as minute from me_visit where doctor_code = " . $v['code'];
+                $sql = "SELECT TIMESTAMPDIFF(MINUTE,INQUIRY_DT,REPLY_DT) as minute from me_visit where doctor_code = '" . $v['code']."'";
                 $res = Db::query($sql);
                 if ($res) {
                     $sum = 0;
