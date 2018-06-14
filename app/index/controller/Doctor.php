@@ -11,6 +11,7 @@ namespace app\index\controller;
 
 use app\index\model\Account;
 use app\index\model\Favorite;
+use app\index\model\UserPatient;
 use app\index\model\Visit;
 use app\index\model\VisitLine;
 use \think\Controller;
@@ -26,6 +27,12 @@ class Doctor extends Controller
      */
     public function index()
     {
+        $user_id = $_SERVER['HTTP_USER_ID'];
+        //检查是否已登录
+        if (!$user_id) {
+            return failLogin("您还未登录");
+        }
+
         //实例化医生模型
         $model = new doctorModel();
 
@@ -73,6 +80,12 @@ class Doctor extends Controller
      */
     public function detail()
     {
+        $user_id = $_SERVER['HTTP_USER_ID'];
+        //检查是否已登录
+        if (!$user_id) {
+            return failLogin("您还未登录");
+        }
+
         //实例化医生模型
         $model = new doctorModel();
         $where['id'] = input('id');
@@ -129,7 +142,17 @@ class Doctor extends Controller
                 } else {
                     $doctor[$k]['is_collect'] = 0;
                 }
-                //查询跟该医生相关的最新一个提问
+                //查询用户是否填写详细信息
+                $cond['user_id']= $user_id;
+                $user_patient = new UserPatient();
+                $r = $user_patient->where($cond)->find();
+                if($r){
+                    $doctor[$k]['is_detail'] =1;
+                }else{
+                    $doctor[$k]['is_detail'] =0;
+                }
+
+
             }
 
             return success($doctor);
