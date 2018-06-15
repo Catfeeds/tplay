@@ -398,7 +398,8 @@ class Doctorcenter extends Controller
             //修改问诊表里面的状态及最后一次回复时间
             $visit = new Visit();
             $reply_dt = $visit->field('reply_dt')->find($id);
-            var_dump($reply_dt);
+            var_dump($reply_dt['reply_dt']);
+            exit;
             if($reply_dt){
                 $v = $visit->save(['status' => 'A', 'reply_dt_last' => date("Y-m-d H:i:s")], ['id' => $id]);
 
