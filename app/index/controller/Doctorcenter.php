@@ -399,13 +399,15 @@ class Doctorcenter extends Controller
             $visit = new Visit();
             $reply_dt = $visit->field('reply_dt')->find($id);
             var_dump($reply_dt['reply_dt']);
-            if($reply_dt['reply_dt']!="NULL"||$reply_dt['reply_dt']!=''){
+            if($reply_dt['reply_dt']=="NULL"||$reply_dt['reply_dt']==''){
                 echo "111";
-                $v = $visit->save(['status' => 'A', 'reply_dt_last' => date("Y-m-d H:i:s")], ['id' => $id]);
+                $v = $visit->save(['status' => 'A', 'reply_dt'=>date("Y-m-d H:i:s"),'reply_dt_last' => date("Y-m-d H:i:s")], ['id' => $id]);
+
 
             }else{
                 echo '222';
-                $v = $visit->save(['status' => 'A', 'reply_dt'=>date("Y-m-d H:i:s"),'reply_dt_last' => date("Y-m-d H:i:s")], ['id' => $id]);
+                $v = $visit->save(['status' => 'A', 'reply_dt_last' => date("Y-m-d H:i:s")], ['id' => $id]);
+
             }
 
             if (!$v) return failMsg('操作失败');
