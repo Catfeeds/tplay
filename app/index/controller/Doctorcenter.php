@@ -400,9 +400,11 @@ class Doctorcenter extends Controller
             $reply_dt = $visit->field('reply_dt')->find($id);
 
             if($reply_dt['reply_dt']!='NULL'){
+                echo "111";
                 $v = $visit->save(['status' => 'A', 'reply_dt_last' => date("Y-m-d H:i:s")], ['id' => $id]);
 
             }else{
+                echo '222';
                 $v = $visit->save(['status' => 'A', 'reply_dt'=>date("Y-m-d H:i:s"),'reply_dt_last' => date("Y-m-d H:i:s")], ['id' => $id]);
             }
 
