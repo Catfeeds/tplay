@@ -571,8 +571,20 @@ class Doctorcenter extends Controller
         //检查申请金额是否在可申请余额范围之类
         if($data['amount']>$amount) return failMsg('申请金额不在可申请余额范围之类，请重新填写金额');
 
+        //每日提现最大金额限制
+        $max_price = Db::name('webconfig')->field('max_price')->find();
+        if($max_price) {
+            if ($data['amount'] > $max_price['max_price']) {
+                return failMsg('最大可以设置' . $max_price['max_price'] );
+            }
+        }
+        //每日提现最大次数限制
+        $wx_payment = Db::name('wx_payment_line')->count();
+
+
         $res = $model->save($data);
         if ($res) {
+
             return success($data);
         } else {
             return failMsg('申请失败');
@@ -812,9 +824,10 @@ class Doctorcenter extends Controller
         $count = substr_count($post_data['tag'],',');
 
         $max_tag = Db::name('webconfig')->field('max_tag')->find();
-
-        if($count>$max_tag['max_tag']-1){
-            return failMsg('最多可以设置'.$max_tag['max_tag'].'个');
+        if($max_tag) {
+            if ($count > $max_tag['max_tag'] - 1) {
+                return failMsg('最多可以设置' . $max_tag['max_tag'] . '个');
+            }
         }
 
         $model = new doctorModel();
