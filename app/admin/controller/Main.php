@@ -53,7 +53,17 @@ class Main extends Permissions
 
         $web['doctor_num'] = Db::name('doctor')->count();
         $web['message_num'] = Db::name('feedback')->count();
-        $web['status_answer'] = Db::name('visit')->where(['status'=>'p'])->count();
+        $web['status_answer'] = Db::name('visit')->where(['status'=>'P'])->count();
+        $status_user = Db::name('user')->where(['status'=>'A','code'=>''])->select();
+        foreach ($status_user as $k=>$v){
+
+            $re = Db::name('doctor')->where(['user_id'=>$v['id']])->find();
+            if($re){
+                unset($status_user[$k]);
+            }
+        }
+        $web['status_user'] = count($status_user);
+
         $web['status_withdraw'] = Db::name('wx_payment_line')->where('status','P')->count();
         $web['look_message'] = Db::name('feedback')->where('status','P')->count();
 

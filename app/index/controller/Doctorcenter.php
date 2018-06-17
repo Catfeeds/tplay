@@ -758,6 +758,75 @@ class Doctorcenter extends Controller
 
     }
 
+    /***
+     * 查询标签
+     */
+    public function seeTag(){
+        $user_id = $_SERVER['HTTP_USER_ID'];
+        //检查是否已登录
+        if(!$user_id){
+            return failLogin("您还未登录");
+        }
+        $doctor_code = $_SERVER['HTTP_CODE'];
+
+        $model = new doctorModel();
+        $res = $model ->field('tag')->where(['code'=>$doctor_code])->find()->toArray();
+        if($res){
+            return success($res);
+        }else{
+            return failMsg('获取失败');
+        }
+    }
+    /**
+     * 修改标签
+     */
+    public function updateTag(){
+
+        $user_id = $_SERVER['HTTP_USER_ID'];
+        //检查是否已登录
+        if(!$user_id){
+            return failLogin("您还未登录");
+        }
+        $doctor_code = $_SERVER['HTTP_CODE'];
+
+        $post_data['tag'] =input('tag');
+        $result = $this->validate(
+            [
+                'tag'  => $post_data['tag'],
+            ],
+            [
+                'tag'  => 'require',
+
+            ],
+            [
+                'tag.require'  =>  '标签必须,最多设置三个,以,隔开'
+
+            ]
+        );
+
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
+        $post_data['tag'] = str_replace('，',',',$post_data['tag']);
+        $count = substr_count($post_data['tag'],',');
+
+        $max_tag = Db::name('webconfig')->field('max_tag')->find();
+
+        if($count>$max_tag['max_tag']-1){
+            return failMsg('最多可以设置'.$max_tag['max_tag'].'个');
+        }
+
+        $model = new doctorModel();
+        $res = $model ->save($post_data,['code'=>$doctor_code]);
+        if($res){
+            return success($post_data);
+        }else{
+            return failMsg('修改失败');
+        }
+
+    }
+
 
 
 

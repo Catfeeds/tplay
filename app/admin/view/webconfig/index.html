@@ -60,6 +60,7 @@
         <div class="layui-form-mid layui-word-aux">单位KB</div>
       </div>
 
+      <!--
       <div class="layui-form-item">
         <label class="layui-form-label">统计代码</label>
         <div class="layui-input-block" style="max-width: 600px">
@@ -72,6 +73,27 @@
         <div class="layui-input-block" style="max-width: 600px">
           <textarea placeholder="用','隔开" class="layui-textarea" name="black_ip">{$web_config.black_ip}</textarea>
         </div>
+      </div>-->
+      <div class="layui-form-item">
+        <label class="layui-form-label">每日最大提现金额</label>
+        <div class="layui-input-inline" style="max-width: 600px">
+          <input name="max_price" lay-verify="pass" placeholder="单位元" autocomplete="off" class="layui-input" type="text" value="{$web_config.max_price}">
+        </div>
+        <div class="layui-form-mid layui-word-aux">单位元</div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">每日最大提现次数</label>
+        <div class="layui-input-inline" style="max-width: 600px">
+          <input name="max_num" lay-verify="pass" placeholder="次数" autocomplete="off" class="layui-input" type="text" value="{$web_config.max_num}">
+        </div>
+
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">医生设置标签最大个数</label>
+        <div class="layui-input-inline" style="max-width: 600px">
+          <input name="max_tag" lay-verify="pass" placeholder="个数" autocomplete="off" class="layui-input" type="text" value="{$web_config.max_tag}">
+        </div>
+
       </div>
 
       <div class="layui-form-item">
