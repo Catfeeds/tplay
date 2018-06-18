@@ -82,6 +82,7 @@ class Inquisition extends Permissions
         $visit = new VisitLine();
         $res = $visit->where($where)->order('create_time')->select();
         if($res){
+            $key=0;
             foreach ($res as $k=>$value){
                 if($value['img']!=null){
                     $ids = explode(',',$value['img']);
@@ -109,6 +110,11 @@ class Inquisition extends Permissions
                 }else{
                     $res[$k]['pics'] = [];
                     $res[$k]['vids'] = [];
+                }
+
+                if($value['user_code']!=''){
+                    $res[$k]['key'] = $key +1;
+                    $key++;
                 }
 
             }

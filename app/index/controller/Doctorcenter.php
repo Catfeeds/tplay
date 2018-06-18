@@ -764,7 +764,8 @@ class Doctorcenter extends Controller
         if($res){
             return success($res);
         }else{
-            return failMsg('获取失败');
+            $res = [];
+            return success($res);
         }
 
 
@@ -786,7 +787,8 @@ class Doctorcenter extends Controller
         if($res){
             return success($res);
         }else{
-            return failMsg('获取失败');
+            $res = [];
+            return success($res);
         }
     }
     /**
