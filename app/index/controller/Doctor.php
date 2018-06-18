@@ -411,14 +411,19 @@ class Doctor extends Controller
             $ids .= $v['id'] . ',';
         }
         $ids = substr($ids, 0, strlen($ids) - 1);
-        var_dump($ids);
-        exit;
 
         //表示用户提问  医生编号为空，用户编号不为空
 
         $where1 = "visit_id in($ids) and doctor_code = ''";
 
-        $line = Db::name('visit_line')->field('id,content,create_time')->where($where1)->order('create_time')->group('user_code')->select();
+        $line = Db::name('visit_line')
+            ->field('id,content,create_time')
+            ->where($where1)
+            ->order('create_time')
+            ->group('visit_id')
+            ->select();
+
+
         foreach ($line as $k2=>$v2){
             $line[$k2]['create_time'] = date("Y-m-d H:i:s",$v2['create_time']);
         }
