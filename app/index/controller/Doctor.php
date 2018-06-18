@@ -411,6 +411,8 @@ class Doctor extends Controller
             $ids .= $v['id'] . ',';
         }
         $ids = substr($ids, 0, strlen($ids) - 1);
+        var_dump($ids);
+        exit;
 
         //表示用户提问  医生编号为空，用户编号不为空
 
