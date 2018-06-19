@@ -45,7 +45,12 @@ class Doctor extends Permissions
             $where['create_time'] = [['>=',$min_time],['<=',$max_time]];
         }
 
-        $doctor = $model->where($where)->order('create_time desc')->paginate(20);
+        $doctor = $model->field('me_doctor.*,me_hospital.name as hospital,me_department.name as department')
+            ->join('me_hospital','me_hospital.id=me_doctor.hospital_code','left')
+            ->join('me_department','me_department.id=me_doctor.department_code','left')
+            ->where($where)
+            ->order('create_time desc')
+            ->paginate(20);
 
         foreach ($doctor as $k=>$v){
             //查询该医生的总收入SELECT SUM(AMOUNT) WHERE TYPE='DT' AND CODE=USER_CODE
@@ -86,6 +91,7 @@ class Doctor extends Permissions
                 ['phone', 'require|max:11|/^1[3-8]{1}[0-9]{9}$/', '手机号不能为空手机号码最多不能超过11个字符|手机号码格式不正确'],
                 ['original_price', 'require', '原价格不能为空'],
                 ['hospital_code', 'require', '请选择所属医院'],
+                ['department_code', 'require', '请选择所属科室'],
                 ['title', 'require', '请选择所属职位'],
                 ['user_id', 'require', '请选择关联用户'],
                 ['head_img', 'require', '请上传头像'],
@@ -120,9 +126,13 @@ class Doctor extends Permissions
                 }
 
             }
+            $department = Db::name('department')->select();
+            $this->assign('department',$department);
+
             $id = input('id');
             $this->assign('userid',$id);
             $this->assign('hospital',$hospital);
+
             $this->assign('user',$user);
             return $this->fetch();
         }
@@ -145,6 +155,7 @@ class Doctor extends Permissions
                 ['phone', 'require|max:11|/^1[3-8]{1}[0-9]{9}$/', '手机号不能为空手机号码最多不能超过11个字符|手机号码格式不正确'],
                 ['original_price', 'require', '原价格不能为空'],
                 ['hospital_code', 'require', '请选择所属医院'],
+                ['department_code', 'require', '请选择所属科室'],
                 ['title', 'require', '请选择所属职位'],
                 ['head_img', 'require', '请上传头像'],
             ]);
@@ -181,6 +192,8 @@ class Doctor extends Permissions
                 }
 
             }
+            $department = Db::name('department')->select();
+            $this->assign('department',$department);
 
             $this->assign('hospital',$hospital);
             $this->assign('user',$user);
@@ -254,7 +267,7 @@ class Doctor extends Permissions
             if(false == $r) {
                 return $this->error('删除失败');
             } else {
-                return $this->success('删除成功','admin/doctor/index');
+                return $this->success('删除成功','admin/doctor/user');
             }
         }
     }

@@ -40,7 +40,12 @@ class Doctor extends Controller
         $pagesize = input('pagesize', '5');
 
 
-        $doctor = $model->field('id,code,name,head_img,title,hospital_code,department_code,original_price,tag')->limit(($page - 1) * $pagesize, $pagesize)->order('create_time desc')->select();
+        $doctor = $model->field('id,code,name,head_img,title,hospital_code,department_code,original_price,tag,me_hospital.name as hospital,me_department.name as department')
+            ->join('me_hospital','me_hospital.id=me_doctor.hospital_code','left')
+            ->join('me_department','me_department.id=me_doctor.department_code','left')
+            ->limit(($page - 1) * $pagesize, $pagesize)
+            ->order('create_time desc')
+            ->select();
 
 
         if ($doctor) {
@@ -107,7 +112,10 @@ class Doctor extends Controller
             return failMsg($result);
         }
 
-        $doctor = $model->where($where)->select();
+        $doctor = $model->field('me_doctor.*,me_hospital.name as hospital,me_department.name as department')
+            ->join('me_hospital','me_hospital.id=me_doctor.hospital_code','left')
+            ->join('me_department','me_department.id=me_doctor.department_code','left')
+            ->where($where)->select();
         if ($doctor) {
             foreach ($doctor as $k => $v) {
                 $doctor[$k]['head_img'] = geturl($v['head_img']);
@@ -275,20 +283,18 @@ class Doctor extends Controller
         $result = $this->validate(
             [
                 'user_code' => $data['user_code'],
-                'visit_id' => $data['visit_id'],
-                'content' => $data['content']
+                'visit_id' => $data['visit_id']
+
 
             ],
             [
                 'user_code' => 'require',
                 'visit_id' => 'require',
-                'content' => 'require'
 
             ],
             [
                 'user_code.require' => '用户编号必须',
                 'visit_id.require' => '问诊id必须',
-                'content.require' => '内容必须'
 
             ]
         );

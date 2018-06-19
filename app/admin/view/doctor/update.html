@@ -111,6 +111,17 @@
             </div>
         </div>
         <div class="layui-form-item">
+            <label class="layui-form-label">所属科室</label>
+            <div class="layui-input-block" style="max-width:600px;">
+                <select name="department_code" lay-filter="aihao">
+                    <option value="">请选择科室</option>
+                    {volist name="department" id="vo"}
+                    <option value="{$vo.id}" {notempty name="$doctor.department_code"}{eq name="$doctor.department_code" value="$vo.id"} selected=""{/eq}{/notempty}>{$vo.name}</option>
+                    {/volist}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
             <label class="layui-form-label">所属职位</label>
             <div class="layui-input-block" style="max-width:600px;">
                 <select name="title" lay-filter="aihao">
@@ -155,7 +166,6 @@
         <div class="layui-form-item">
             <label class="layui-form-label">二维码</label>
             <div class="layui-upload-list">
-                <label class="layui-form-label"></label>
                 <img class="layui-upload-img"  width="150" height="150" {notempty name="$doctor.aq_path"}src="{$doctor.aq_path|geturl}"{/notempty}>
             </div>
         </div>

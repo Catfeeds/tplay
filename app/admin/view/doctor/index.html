@@ -65,6 +65,7 @@
             <col width="100">
             <col width="200">
             <col width="100">
+            <col width="100">
             <col width="200">
         </colgroup>
         <thead>
@@ -72,8 +73,9 @@
             <th>编号</th>
             <th>头像</th>
             <th>姓名</th>
-            <th>职位</th>
             <th>所属医院</th>
+            <th>所属科室</th>
+            <th>职位</th>
             <th>从业年限</th>
             <th>手机号</th>
             <th>原价格</th>
@@ -91,8 +93,9 @@
             <td>{$vo.code}</td>
             <td><a href="{$vo.head_img|geturl}" class="tooltip"><img src="{$vo.head_img|geturl}" width="20" height="20"></a></td>
             <td>{$vo.name}</td>
+            <td>{$vo.hospital} </td>
+            <td>{$vo.department} </td>
             <td>{$vo.title}</td>
-            <td>玛恩医院 </td>
             <td>{$vo.job_period}年</td>
             <td>{$vo.phone}</td>
             <td>￥{$vo.original_price}元</td>
