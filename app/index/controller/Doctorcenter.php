@@ -42,7 +42,10 @@ class Doctorcenter extends Controller
 
 
         $model = new doctorModel;
-        $doctor =$model->where($where)->select();
+        $doctor =$model->field('me_doctor.*,me_hospital.name as hospital,me_department.name as department')
+            ->join('me_hospital','me_hospital.id=me_doctor.hospital_code','left')
+            ->join('me_department','me_department.id=me_doctor.department_code','left')
+            ->where($where)->select();
         if ($doctor) {
             foreach ($doctor as $k => $v) {
                 $doctor[$k]['head_img'] = geturl($v['head_img']);

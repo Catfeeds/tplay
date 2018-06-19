@@ -40,7 +40,7 @@ class Doctor extends Controller
         $pagesize = input('pagesize', '5');
 
 
-        $doctor = $model->field('id,code,name,head_img,title,hospital_code,department_code,original_price,tag,me_hospital.name as hospital,me_department.name as department')
+        $doctor = $model->field('me_doctor.*,me_hospital.name as hospital,me_department.name as department')
             ->join('me_hospital','me_hospital.id=me_doctor.hospital_code','left')
             ->join('me_department','me_department.id=me_doctor.department_code','left')
             ->limit(($page - 1) * $pagesize, $pagesize)
@@ -93,7 +93,7 @@ class Doctor extends Controller
 
         //实例化医生模型
         $model = new doctorModel();
-        $where['id'] = input('id');
+        $where['me_doctor.id'] = input('id');
         //验证字段
         $result = $this->validate(
             [
@@ -167,6 +167,53 @@ class Doctor extends Controller
         } else {
             return emptyResult();
         }
+
+    }
+
+    /**
+     * 获取医生对应的医院信息
+     */
+    public function hospital(){
+        $user_id = $_SERVER['HTTP_USER_ID'];
+        //检查是否已登录
+        if (!$user_id) {
+            return failLogin("您还未登录");
+        }
+
+        //实例化医生模型
+        $where['me_doctor.id'] = input('id');
+        //验证字段
+        $result = $this->validate(
+            [
+                'id' => input('id'),
+            ],
+            [
+                'id' => 'require',
+            ],
+            [
+                'id.require' => '医生id必须',
+            ]
+        );
+
+        if (true !== $result) {
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
+
+        //根据医生id获取医院详情
+        $res = Db::name('doctor')->field('me_hospital.*')
+            ->join('me_hospital','me_hospital.id=me_doctor.hospital_code','left')
+            ->where($where)
+            ->select();
+
+
+        if($res){
+            return success($res);
+        }else{
+            return emptyResult();
+        }
+
+
 
     }
 
