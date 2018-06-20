@@ -470,7 +470,7 @@ class Doctor extends Controller
         $where1 = "visit_id in($ids) and doctor_code = ''";
 
         $line = Db::name('visit_line')
-            ->field('id,content,create_time,visit_id,me_user.name')
+            ->field('me_visit_line.*,visit_id,me_user.name')
             ->join('me_user','me_user.code=me_visit_line.user_code','left')
             ->where($where1)
             ->order('create_time')
