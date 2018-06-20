@@ -108,7 +108,7 @@ class Doctor extends Permissions
             $max_tag = Db::name('webconfig')->field('max_tag')->find();
             if($max_tag) {
                 if ($count > $max_tag['max_tag'] - 1) {
-                    return $this->error('最多可以设置' . $max_tag['max_tag'] . '个');
+                    return $this->error('标签最多可以设置' . $max_tag['max_tag'] . '个');
                 }
             }
 
@@ -182,7 +182,7 @@ class Doctor extends Permissions
             $max_tag = Db::name('webconfig')->field('max_tag')->find();
             if($max_tag) {
                 if ($count > $max_tag['max_tag'] - 1) {
-                    return $this->error('最多可以设置' . $max_tag['max_tag'] . '个');
+                    return $this->error('标签最多可以设置' . $max_tag['max_tag'] . '个');
                 }
             }
 
