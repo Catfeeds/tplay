@@ -58,13 +58,13 @@ class Withdraw extends Permissions
             $data['operate_dt'] = date("Y-m-d H:i:s");
             $data['remark'] =$post['remark'];
             //减少当前申请人的账户余额
-            $w = $model->field('doctor_code,amount')->find($id);
+            /*$w = $model->field('doctor_code,amount')->find($id);
             $data_a['code'] = $w['doctor_code'];
             $data_a['amount'] = -$w['amount'];
             $data_a['src'] = 'W';
             $account = new Account();
             $a = $account->save($data_a);
-            if(!$a) return $this->error('处理失败');
+            if(!$a) return $this->error('处理失败');*/
 
             $r = $model ->save($data,['id'=>$post['id']]);
             if(false == $r) {

@@ -92,6 +92,7 @@ class Membercenter extends Controller
             //统计未回答和已回答的条数
             $re['pedding'] = $model->where(['status'=>'P','user_code'=> $_SERVER['HTTP_CODE']])->count();
             $re['anserwed']= $model->where(['status'=>'A','user_code'=> $_SERVER['HTTP_CODE']])->count();
+            $re['closed']= $model->where(['status'=>'C','user_code'=> $_SERVER['HTTP_CODE']])->count();
 
             return success($re);
         }else{

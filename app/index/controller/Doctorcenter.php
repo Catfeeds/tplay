@@ -500,6 +500,7 @@ class Doctorcenter extends Controller
         }
         $where['type'] = 'DT';
         $where['code'] = $doctor_code;
+        $where['src'] ='O';
         $model = new accountModel();
         $re = $model->field('id,order_code,amount,create_time')->where($where)->order('create_time desc')->select();
         if ($re) {
@@ -569,10 +570,10 @@ class Doctorcenter extends Controller
         //检查该用户是否有可提现余额
         $account = new Account();
         $amount = $account->where(['code'=>$doctor_code,'type'=>'DT'])->sum('amount');
-        if($amount<=0) return failMsg('余额不足，无法提现');
+        if($amount<=0) return failMsg('余额不足');
 
         //检查申请金额是否在可申请余额范围之类
-        if($data['amount']>$amount) return failMsg('申请金额不在可申请余额范围之类，请重新填写金额');
+        if($data['amount']>$amount) return failMsg('金额超出范围');
 
         //每日提现最大金额限制
         $max_price = Db::name('webconfig')->field('max_price')->find();
@@ -585,12 +586,23 @@ class Doctorcenter extends Controller
         $wx_payment = Db::name('wx_payment_line')->count();
 
 
-        $res = $model->save($data);
-        if ($res) {
 
+        Db::startTrans();
+        try {
+            $res = $model->save($data);
+            if(!$res) return failMsg('提现失败');
+            //提现申请提交之后 减少账户余额
+            $data_account['code'] = $doctor_code;
+            $data_account['src'] = 'W';
+            $data_account['amount'] = -$data['amount'];
+            $a = $account->save($data_account);
+            if(!$a) return failMsg('申请失败');
+
+            Db::commit();
             return success($data);
-        } else {
-            return failMsg('申请失败');
+        } catch (\Exception $e) {
+            Db::rollback();
+            return failMsg($e->getMessage());
         }
 
     }
