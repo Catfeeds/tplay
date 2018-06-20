@@ -101,6 +101,17 @@ class Doctor extends Permissions
             if (!$validate->check($post)) {
                 $this->error('提交失败：' . $validate->getError());
             }
+            //处理标签的中文逗号
+            $post['tag'] = str_replace('，',',',$post['tag']);
+            $count = substr_count($post['tag'],',');
+
+            $max_tag = Db::name('webconfig')->field('max_tag')->find();
+            if($max_tag) {
+                if ($count > $max_tag['max_tag'] - 1) {
+                    return $this->error('最多可以设置' . $max_tag['max_tag'] . '个');
+                }
+            }
+
             //验证医生编号是否存在
             $name = $model->where(['code'=>$post['code']])->select();
             if(!empty($name)) {
@@ -164,6 +175,17 @@ class Doctor extends Permissions
             if (!$validate->check($post)) {
                 $this->error('提交失败：' . $validate->getError());
             }
+            //处理标签的中文逗号
+            $post['tag'] = str_replace('，',',',$post['tag']);
+            $count = substr_count($post['tag'],',');
+
+            $max_tag = Db::name('webconfig')->field('max_tag')->find();
+            if($max_tag) {
+                if ($count > $max_tag['max_tag'] - 1) {
+                    return $this->error('最多可以设置' . $max_tag['max_tag'] . '个');
+                }
+            }
+
             //验证医生编号是否存在
             $name = $model->where(['code'=>$post['code'],'id'=>['neq',$post['id']]])->select();
             if(!empty($name)) {
