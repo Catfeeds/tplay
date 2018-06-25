@@ -630,6 +630,110 @@ class Doctorcenter extends Controller
     }
 
     /**
+     * 提现总金额
+     */
+    public function withdrawSum(){
+        $doctor_code = $_SERVER['HTTP_CODE'];
+        //检查是否已登录
+
+        if(!$doctor_code){
+            return failLogin("您还未登录");
+        }
+        $where['type'] = 'DT';
+        $where['code'] = $doctor_code;
+        $where['src'] = 'W';
+        $model = new accountModel();
+        $sum = $model->where($where)->sum('amount');
+        if ($sum) {
+            $re['amount'] = number_format($sum,2);
+            return success($re);
+        } else {
+            $re['amount'] = '0.00';
+            return success($re);
+        }
+
+    }
+
+    /**
+     * 根据订单编号,跳转到问诊记录
+     */
+
+    public function orderDetail(){
+        $doctor_code = $_SERVER['HTTP_CODE'];
+        //检查是否已登录
+        if(!$doctor_code){
+            return failLogin("您还未登录");
+        }
+        $visit_id = input('id');
+
+        //验证字段
+        $result = $this->validate(
+            [
+                'id'  => input('id'),
+            ],
+            [
+                'id'  => 'require',
+
+            ],
+            [
+                'id.require'  =>  '问题id必须'
+
+            ]
+        );
+
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
+
+        $where['visit_id'] = $visit_id;
+        $visit = new VisitLine();
+        $res = $visit->where($where)->order('create_time')->select();
+        if($res){
+            foreach ($res as $k=>$value){
+                if($value['img']!=null){
+                    $ids = explode(',',$value['img']);
+                    $res[$k]['pics'] = '';
+                    $res[$k]['vids'] = '';
+                    foreach ($ids as $k1=>$v1){
+                        if(isImage(geturl($v1))){
+                            $res[$k]['pics'] .= geturl($v1).',';
+                        }else{
+                            $res[$k]['vids'] .= geturl($v1).',';
+                        }
+
+
+                    }
+                    if($res[$k]['pics']){
+                        $res[$k]['pics'] = substr($res[$k]['pics'],0,-1);
+                        $res[$k]['pics'] = str_replace('\\','/',explode(',',$res[$k]['pics']));
+                    }
+
+                    if($res[$k]['vids']){
+                        $res[$k]['vids'] = substr($res[$k]['vids'],0,-1);
+                        $res[$k]['vids'] = str_replace('\\','/',explode(',',$res[$k]['vids']));
+
+                    }
+
+
+                }
+
+            }
+        }
+
+        if($res){
+            return success($res);
+        }else{
+            return emptyResult();
+        }
+
+
+
+    }
+
+
+
+    /**
      * 二维码管理
      */
     public function code()

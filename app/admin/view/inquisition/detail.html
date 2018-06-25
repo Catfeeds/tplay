@@ -65,9 +65,23 @@
             <h3 style="border: 1px solid #009688;height: 40px;background: #009688;color: #fff;line-height: 40px;">问诊详情</h3>
         </div>
         {volist name="list" id="vo"}
+
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="text-align: left;">是否显示</label>
+            <div class="layui-input-block">
+                <div class="layui-input-inline">
+                    <input type="checkbox" name="is_open" lay-skin="switch" lay-text="ON|OFF" value="1">
+                    <div class="layui-unselect layui-form-switch layui-form-onswitch" lay-skin="_switch"><em>ON</em><i></i></div>
+                </div>
+            </div>
+        </div>
+
         <div class="layui-form-item">
             {if condition="$vo.user_code eq null "}
-            <label class="layui-form-label" style="width: 800px; "><span style="float:left;">医生回答</span><span style="float:right;">时间：{$vo.create_time}</span></label>
+            <label class="layui-form-label" style="width: 800px; ">
+                <span style="float:left;">医生回答</span>
+                <span style="float:right;">时间：{$vo.create_time}</span>
+            </label>
             <div class="layui-input-block" style="max-width: 600px">
                 <textarea  class="layui-textarea" readonly style="width: 700px;">{$vo.content}</textarea>
             </div>
