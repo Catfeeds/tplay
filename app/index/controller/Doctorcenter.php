@@ -670,6 +670,8 @@ class Doctorcenter extends Controller
         $model = new doctorModel();
         $where['code'] = $_SERVER['HTTP_CODE'];
         $res = $model->field('aq_path,aq_path_dt,aq_path_url,gzh_qr_path')->where($where)->find()->toArray();
+        $res['gzh_qr_path'] = geturl( $res['gzh_qr_path']);
+        $res['gzh_qr_path'] = str_replace("\\", "/",  $res['gzh_qr_path']);
 
         if ($res) {
             return success($res);
