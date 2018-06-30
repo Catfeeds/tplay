@@ -630,6 +630,33 @@ class Doctorcenter extends Controller
     }
 
     /**
+     * 提现总金额
+     */
+    public function withdrawSum(){
+        $doctor_code = $_SERVER['HTTP_CODE'];
+        //检查是否已登录
+
+        if(!$doctor_code){
+            return failLogin("您还未登录");
+        }
+        $where['type'] = 'DT';
+        $where['code'] = $doctor_code;
+        $where['src'] = 'W';
+        $model = new accountModel();
+        $sum = $model->where($where)->sum('amount');
+        if ($sum) {
+            $re['amount'] = number_format($sum,2);
+            return success($re);
+        } else {
+            $re['amount'] = '0.00';
+            return success($re);
+        }
+
+    }
+
+
+
+    /**
      * 二维码管理
      */
     public function code()
@@ -643,6 +670,8 @@ class Doctorcenter extends Controller
         $model = new doctorModel();
         $where['code'] = $_SERVER['HTTP_CODE'];
         $res = $model->field('aq_path,aq_path_dt,aq_path_url,gzh_qr_path')->where($where)->find()->toArray();
+        $res['gzh_qr_path'] = geturl( $res['gzh_qr_path']);
+        $res['gzh_qr_path'] = str_replace("\\", "/",  $res['gzh_qr_path']);
 
         if ($res) {
             return success($res);

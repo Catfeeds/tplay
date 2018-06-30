@@ -290,6 +290,7 @@ class Doctor extends Controller
             $account = new Account();
             $post_account['code']= $data['doctor_code'];
             $post_account['order_code'] = "o".date('YmdHis').rand(100,999);
+            $post_account['visit_id'] = $visit_id;
             $post_account['amount'] = "+".$data['origianl_price'];
             $a = $account->save($post_account);
             if(!$a) return failMsg('操作失败');
