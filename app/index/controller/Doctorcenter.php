@@ -137,9 +137,9 @@ class Doctorcenter extends Controller
             // 验证失败 输出错误信息
             return failMsg($result);
         }
-        $res = $model->field('me_visit.*,me_user.id as user_id,me_user.wx_head_img_url,me_user.name,me_user.phone')
-            ->join('me_user','me_user.code = me_visit.user_code')
-            //->join('me_user_patient','me_user.id = me_user_patient.user_id')
+        $res = $model->field('me_visit.*,me_user.id as user_id,me_user.wx_head_img_url,me_user_patient.name,me_user_patient.phone')
+            ->join('me_user','me_user.code = me_visit.user_code','left')
+            ->join('me_user_patient','me_user.id = me_user_patient.user_id','left')
             ->where($where)
             ->order('create_time desc')
             ->select();

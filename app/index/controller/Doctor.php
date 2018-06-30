@@ -470,8 +470,9 @@ class Doctor extends Controller
         $where1 = "visit_id in($ids) and doctor_code = ''";
 
         $line = Db::name('visit_line')
-            ->field('me_visit_line.*,visit_id,me_user.name')
+            ->field('me_visit_line.*,me_user_patient.name,me_user.id,me_user_patient.phone')
             ->join('me_user','me_user.code=me_visit_line.user_code','left')
+            ->join('me_user_patient','me_user_patient.user_id=me_user.id','left')
             ->where($where1)
             ->order('create_time')
             ->group('visit_id')
@@ -480,6 +481,7 @@ class Doctor extends Controller
 
         foreach ($line as $k2=>$v2){
             $line[$k2]['create_time'] = date("Y-m-d H:i:s",$v2['create_time']);
+            $line[$k2]['phone'] = substr($v2['phone'],-4);
         }
         if ($line) {
             return success($line);
