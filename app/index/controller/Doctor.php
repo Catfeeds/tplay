@@ -520,6 +520,7 @@ class Doctor extends Controller
         }
 
         $where['visit_id'] = $id;
+        $where['visible'] = 'Y';
         $visit = new VisitLine();
         $res = $visit->where($where)->order('create_time')->select();
 
