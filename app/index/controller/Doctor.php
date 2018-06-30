@@ -468,7 +468,7 @@ class Doctor extends Controller
 
         //表示用户提问  医生编号为空，用户编号不为空
 
-        $where1 = "visit_id in($ids) and doctor_code = ''";
+        $where1 = "visit_id in($ids) and doctor_code = '' and visible = 'Y'";
 
         $line = Db::name('visit_line')
             ->field('me_visit_line.*,me_user_patient.name,me_user.id,me_user_patient.phone')

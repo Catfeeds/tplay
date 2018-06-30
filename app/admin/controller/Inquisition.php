@@ -182,4 +182,47 @@ class Inquisition extends Permissions
 
     }
 
+    /**
+     * 设置该问题是否前端可见
+     */
+    public function visible(){
+        //获取id
+        $id = $this->request->has('id') ? $this->request->param('id', 0, 'intval') : 0;
+        if($id > 0) {
+            if($this->request->isPost()) {
+                //是提交操作
+                $post = $this->request->post();
+                $visible = $post['visible'];
+                if(false == Db::name('visit_line')->where('id',$id)->update(['visible'=>$visible])) {
+                    return $this->error('修改失败');
+                } else {
+                    return $this->success('修改成功','admin/inquisition/index');
+                }
+            }
+        } else {
+            return $this->error('id不正确');
+        }
+
+    }
+
+    public function hide(){
+        //获取id
+        $id = $this->request->has('id') ? $this->request->param('id', 0, 'intval') : 0;
+        if($id > 0) {
+            if($this->request->isPost()) {
+                //是提交操作
+                $post = $this->request->post();
+                $visible = $post['visible'];
+                if(false == Db::name('visit_line')->where('id',$id)->update(['visible'=>$visible])) {
+                    return $this->error('修改失败');
+                } else {
+                    return $this->success('修改成功','admin/inquisition/index');
+                }
+            }
+        } else {
+            return $this->error('id不正确');
+        }
+
+    }
+
 }

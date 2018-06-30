@@ -343,7 +343,12 @@ class Membercenter extends Controller
         $where['user_code'] = $_SERVER['HTTP_CODE'];
         $model = new favoriteModel();
 
-        $doctor = $model->field('me_doctor.id,code,name,head_img,title,hospital_code,department_code,original_price,tag')->join('me_doctor','me_doctor.code=me_favorite.follow_code')->where($where)->select();
+        $doctor = $model->field('me_doctor.id,code,me_doctor.name,head_img,title,hospital_code,department_code,original_price,tag,me_hospital.name as hospital,me_department.name as department')
+            ->join('me_doctor','me_doctor.code=me_favorite.follow_code')
+            ->join('me_hospital','me_hospital.id=me_doctor.hospital_code','left')
+            ->join('me_department','me_department.id=me_doctor.department_code','left')
+            ->where($where)
+            ->select();
         if($doctor){
             foreach ($doctor as $k=>$v){
                 $doctor[$k]['head_img'] = geturl($v['head_img']);

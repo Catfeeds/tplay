@@ -502,7 +502,12 @@ class Doctorcenter extends Controller
         $where['code'] = $doctor_code;
         $where['src'] ='O';
         $model = new accountModel();
-        $re = $model->field('id,order_code,amount,create_time')->where($where)->order('create_time desc')->select();
+        $re = $model->field('me_account.id,order_code,amount,me_account.create_time,visit_id,me_visit.status')
+            ->join('me_visit','me_visit.id= me_account.visit_id','left')
+            ->where($where)
+            ->order('create_time desc')
+            ->select();
+
         if ($re) {
             return success($re);
         } else {
@@ -646,6 +651,7 @@ class Doctorcenter extends Controller
         $sum = $model->where($where)->sum('amount');
         if ($sum) {
             $re['amount'] = number_format($sum,2);
+            $re['amount'] = str_replace('-','',$re['amount']);
             return success($re);
         } else {
             $re['amount'] = '0.00';

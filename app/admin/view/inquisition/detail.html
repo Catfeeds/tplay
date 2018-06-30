@@ -69,9 +69,9 @@
         <div class="layui-form-item">
             <label class="layui-form-label" style="text-align: left;">是否显示</label>
             <div class="layui-input-block">
-                <div class="layui-input-inline">
-                    <input type="checkbox" name="is_open" lay-skin="switch" lay-text="ON|OFF" value="1">
-                    <div class="layui-unselect layui-form-switch layui-form-onswitch" lay-skin="_switch"><em>ON</em><i></i></div>
+                <div class="layui-input-inline" style="line-height: 36px;">
+                    <a class="layui-btn layui-btn-xs open layui-btn-primary" data-id="{$vo.id}" style="margin-right: 0;font-size:12px;">{if condition="$vo.visible eq 'Y'"}<i class="fa fa-toggle-on"></i><em>ON</em>{else/}<i class="fa fa-toggle-off"></i><em>OFF</em>{/if}</a>
+
                 </div>
             </div>
         </div>
@@ -143,6 +143,50 @@
             app.set({
                 type: 'iframe'
             }).init();
+        });
+    </script>
+
+    <script type="text/javascript">
+        layui.use('layer', function(){
+            var layer = layui.layer;
+            $('.open').click(function(){
+                var id = $(this).attr('data-id');
+                layer.msg('是否显示',{
+                    time:20000
+                    ,btn: ['是', '否', '再想想']
+                    ,yes: function(index, layero){
+                        $.ajax({
+                            url:"{:url('admin/inquisition/visible')}"
+                            ,type:'post'
+                            ,data:{id:id,visible:'Y'}
+                            ,success:function(res){
+                                layer.msg(res.msg);
+                                if(res.code == 1){
+                                    setTimeout(function(){
+                                        //location.href = res.url;
+                                        location.reload();
+                                    },1500)
+                                }
+                            }
+                        })
+                    }
+                    ,btn2: function(index, layero){
+                        $.ajax({
+                            url:"{:url('admin/inquisition/hide')}"
+                            ,type:'post'
+                            ,data:{id:id,visible:'N'}
+                            ,success:function(res){
+                                layer.msg(res.msg);
+                                if(res.code == 1){
+                                    setTimeout(function(){
+                                        location.reload();
+                                    },1500)
+                                }
+                            }
+                        })
+                    }
+                })
+            })
         });
     </script>
 
