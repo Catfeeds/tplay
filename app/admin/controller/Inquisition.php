@@ -192,7 +192,13 @@ class Inquisition extends Permissions
             if($this->request->isPost()) {
                 //是提交操作
                 $post = $this->request->post();
-                $visible = $post['visible'];
+                $visit = Db::name('visit_line')->find($id);
+                if($visit['visible']=='N'){
+                    $visible = 'Y';
+                }else{
+                    $visible = 'N';
+                }
+
                 if(false == Db::name('visit_line')->where('id',$id)->update(['visible'=>$visible])) {
                     return $this->error('修改失败');
                 } else {
