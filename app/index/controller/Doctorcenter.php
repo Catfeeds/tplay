@@ -700,7 +700,7 @@ class Doctorcenter extends Controller
         }
 
         $post_data['page'] = input('page');
-        $post_data['width'] = input('width');
+        $post_data['width'] = input('width','430');
         //验证字段
         $result = $this->validate(
             [
@@ -731,8 +731,8 @@ class Doctorcenter extends Controller
         $filename = date("Ym")."/".md5(time().mt_rand(10, 99)).".jpg"; //新图片名称
 
         $newFilePath = $imgDir.$filename;
-        if (!file_exists(date("Ym"))){
-            mkdir(date("Ym"));
+        if (!file_exists($imgDir.date("Ym"))){
+            mkdir($imgDir.date("Ym"));
         }
 
         $newFile = fopen(ROOT_PATH.'public/'.$newFilePath,"w"); //打开文件准备写入
@@ -747,6 +747,79 @@ class Doctorcenter extends Controller
             $data['aq_path'] = $newFilePath;
             $data['aq_path_dt'] = date("Y-m-d H:i:s");
             $data['aq_path_url'] = $post_data['page'];
+            $model->save($data,['user_id'=>$user_id]);
+            return  json( ['status' => '200', 'msg' => 'ok', 'data' => $data] );
+        } else {
+            return failMsg('生成失败');
+        }
+
+    }
+
+    /**
+     * 生成第三方二维码
+     */
+    public function createCode1(){
+        $user_id = $_SERVER['HTTP_USER_ID'];;
+        //检查是否已登录
+        if(!$user_id){
+            return failLogin("您还未登录");
+        }
+
+        $result = $this->validate(
+            [
+                'page'  => input('page'),
+
+            ],
+            [
+                'page'  => 'require',
+
+            ],
+            [
+                'page.require'  =>  '医生个人主页地址必须'
+
+            ]
+        );
+        if(true !== $result){
+            // 验证失败 输出错误信息
+            return failMsg($result);
+        }
+
+
+        $key="c_c83aFnkpnMkrIS2zlyDIdprzpCn1cC0NbRaw7wWlJE";
+        $weburl=input('page');
+        $size=input('size');
+        $text=input('text');
+        $color=input('color');
+        $bgcolor=input('bgcolor');
+
+        //$logo=Config::get('upload_url').'logo/1.jpg';
+
+        $url="http://www.2d-code.cn/2dcode/api.php?key=$key";
+        if($weburl){
+            $url.="&url=$weburl";
+        }
+        if($size){
+            $url.="&size=$size";
+        }
+        if($text){
+            $url.="&text=$text";
+        }
+        if($color){
+            $url.="&color=$color";
+        }
+        if($bgcolor){
+            $url.="&bgcolor=$bgcolor";
+        }
+        /*if($logo){
+            $url.="&logo=$logo";
+        }*/
+
+        if ($url) {
+            //把图片路径写入数据库
+            $model = new doctorModel();
+            $data['aq_path'] = $url;
+            $data['aq_path_dt'] = date("Y-m-d H:i:s");
+            $data['aq_path_url'] = $weburl;
             $model->save($data,['user_id'=>$user_id]);
             return  json( ['status' => '200', 'msg' => 'ok', 'data' => $data] );
         } else {
